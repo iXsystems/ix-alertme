@@ -1,0 +1,26 @@
+{
+  "name" : "CHANGEME",
+  "version" : "0.0.1",
+  "logo" : "http://sample.com/logo.jpg",
+  "binary" : {
+    "url" : "https://github.com/ixsystems/ix-alertme/blob/master/provider-plugins/CHANGEME/CHANGEME"
+    "name" : "changeme"
+  },
+  "depends" : {
+    "pkg" : "A.Package.From.Repo"
+  }
+  "settings" : {
+    "setting1" : {
+      "id" : "setting1",
+      "description" : "Description of setting1",
+      "type" : "string",
+      "default_value" : "example"
+    },
+    "setting2" : {
+      "id" : "setting2",
+      "description" : "Description of setting2",
+      "type" : "number",
+      "default_value" : 10
+    }
+  }
+}
