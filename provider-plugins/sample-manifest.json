@@ -3,12 +3,12 @@
   "version" : "0.0.1",
   "logo" : "http://sample.com/logo.jpg",
   "binary" : {
-    "url" : "https://github.com/ixsystems/ix-alertme/blob/master/provider-plugins/CHANGEME/CHANGEME"
+    "url" : "https://github.com/ixsystems/ix-alertme/blob/master/provider-plugins/CHANGEME/CHANGEME",
     "name" : "changeme"
   },
   "depends" : {
     "pkg" : "A.Package.From.Repo"
-  }
+  },
   "settings" : {
     "setting1" : {
       "id" : "setting1",
