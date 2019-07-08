@@ -2,46 +2,55 @@ package main
 
 import (
 	"os"
-	"flag"
 	"fmt"
+	"gopkg.in/alecthomas/kingpin.v2"
 	"encoding/json"
 )
 
 var Config Configuration
 
 func CheckForUpdates(){
+  fmt.Println("Check For Updates")
   updates := pluginUpdates()
   tmp, _ := json.Marshal(updates)
   fmt.Println( string(tmp) )
 }
 
-func ListPlugins(){
-
+func ListRemotePlugins(){
+  fmt.Println("List Remote Plugins")
+  updates := availablePlugins()
+  tmp, _ := json.Marshal(updates)
+  fmt.Println( string(tmp) )
 }
 
-func showHelp(){
-  fmt.Println("Provide the -h or --help flags to see usage information")
-  os.Exit(1)
+func ListLocalPlugins(){
+  fmt.Println("List Local Plugins")
+  updates := installedPlugins()
+  tmp, _ := json.Marshal(updates)
+  fmt.Println( string(tmp) )
 }
+
+// Define all the CLI input flags and subcommands
+var (
+  app = kingpin.New("ix-alertme", "Alert Notification Plugin System")
+  Configfile = *app.Flag("config", "Custom config file").Short('c').Default("/usr/local/etc/ix-alertme.json").String()
+
+  plugins 		= app.Command("plugins", "Manage Plugins")
+  pluginsSearch 	= plugins.Command("search", "Search for available plugins")
+  pluginsList 		= plugins.Command("list", "List all installed plugins")
+  pluginsScan		= plugins.Command("scan", "Scan for updates to installed plugins")
+)
 
 func main() {
-  if len(os.Args) < 2 {
-    showHelp()
-  }
-  //Define CLI flags
-  configfile := flag.String("c","/usr/local/etc/ix-alertme.json", "Use custom configuration file")
-  flag.Parse()
-  Config = loadConfiguration(*configfile)
-  //Now parse the input arguments and do the things
-  cmd := "unknown"
-  if len(flag.Args()) < 1 {
-    showHelp()
-  }
-  cmd = flag.Args()[0]
-  fmt.Println("Got Command:", cmd, "ConfigFile:", *configfile)
-  switch cmd {
-    case "check-updates" : CheckForUpdates()
-    default: 
-    fmt.Println("Unknown Option:",cmd); showHelp()
+  app.Version("0.1")
+  switch kingpin.MustParse(app.Parse(os.Args[1:])) {
+    case pluginsSearch.FullCommand():
+        ListRemotePlugins()
+    case pluginsList.FullCommand():    
+        ListLocalPlugins()
+    case pluginsScan.FullCommand():
+        CheckForUpdates()
+    default:
+      app.Fatalf("%s","Unknown subcommand")
   }
 }
