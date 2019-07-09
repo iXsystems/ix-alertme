@@ -11,8 +11,8 @@
     { "name" : "iXsystems", "email" : "support@ixsystems.com", "site_url" : "http://ixsystems.com" }
   ],
   "exec" : {
-    "filename" : "send-email"
-    "url" : "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins/sendmail/",
+    "filename" : "send-email",
+    "url" : "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins/sendmail/plugin.sh",
     "sha256_checksum" : ""
   },
   "depends" : {
@@ -21,5 +21,13 @@
       { "pkg" : "sendmail", "port" : "mail/sendmail" },
       { "pkg" : "jq", "port" : "textproc/jq" }
     ]
+  },
+  "settings" : {
+    "defaults" : {
+
+    },
+    "details" : {
+      "rootaddress" : ""
+    }
   }
 }

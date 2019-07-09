@@ -1,8 +1,8 @@
 package main
 
 import (
+	//"fmt"
 	"time"
-	"net/url"
 	"os"
 	"io/ioutil"
 	"encoding/json"
@@ -14,14 +14,14 @@ type PkgDependency struct {
 
 type FileDependency struct {
 	Filename string		`json:"filename"`
-	RemoteUrl url.URL		`json:"url"`
+	RemoteUrl string		`json:"url"`
 	ExtractWith string		`json:"extract_with"`
 	Sha256 string			`json:"sha256_checksum"`
 }
 
 type PluginDependencies struct {
-	Pkg []PkgDependency	`json:"freebsd"`
-	File []FileDependency	`json:"file"`
+	Pkg []PkgDependency		`json:"freebsd"`
+	File []FileDependency		`json:"file"`
 	Archive []FileDependency	`json:"archive"`
 }
 
@@ -29,29 +29,39 @@ type PluginIndexManifest struct {
 	Name string				`json:"name"`
 	Summary string			`json:"summary"`
 	Description string			`json:"description"`
-	IconUrl url.URL			`json:"icon_url"`
+	IconUrl string				`json:"icon_url"`
 	Version string				`json:"version"`
-	VersionReleased time.Time	`json:"date_released"`
-	RepoName string
+	VersionReleased string		`json:"date_released"`
+	RepoName string			`json:"repository"`
 }
 
 type Person struct {
 	Name string	`json:"name"`
 	Email string	`json:"email"`
-	Url	url.URL	`json:"site_url"`
+	Url	string	`json:"site_url"`
 }
 
 type PluginFullManifest struct {
 	Name string				`json:"name"`
 	Summary string			`json:"summary"`
 	Description string			`json:"description"`
-	IconUrl url.URL			`json:"icon_url"`
+	IconUrl string				`json:"icon_url"`
 	Version string				`json:"version"`
-	VersionReleased time.Time	`json:"date_released"`
+	VersionReleased string		`json:"date_released"`
 	Maintainers []Person		`json:"maintainer"`
-	RepoName string
+	RepoName string			`json:"repository"`
 	Depends	PluginDependencies	`json:"depends"`
-	Exec FileDependency		`json:"exec"`
+	Exec FileDependency			`json:"exec"`
+}
+
+func Timestamp(t string) time.Time {
+  //Run through all the supported timestamp formats and exit with the first successful match
+  stamp, err := time.Parse("2006-01-02T15:04:05",t);
+  if err == nil { return stamp }
+  stamp, err = time.Parse("2006-01-02",t);
+  if err == nil { return stamp }
+  //Always exit at the end with a valid time structure
+  return time.Now().AddDate(-10,0,0) //Now minus 10 years
 }
 
 func installedPlugins() map[string]PluginFullManifest {
@@ -71,10 +81,13 @@ func installedPlugins() map[string]PluginFullManifest {
   return out
 }
 
-func availablePlugins() map[string]PluginIndexManifest {
+func availablePlugins(repolimit string) map[string]PluginIndexManifest {
   out := make(map[string]PluginIndexManifest)
+  //fmt.Println("Available Repos", Config.RepoList)
   for index := range(Config.RepoList) {
     repo := Config.RepoList[index]
+    if repolimit != "" && repo.Name != repolimit { continue } //wrong repository
+    //Show the general info about all available plugins
     list, err := FetchPluginIndex(repo)
     if err != nil { continue }
     for pindex := range(list) {
@@ -88,15 +101,30 @@ func availablePlugins() map[string]PluginIndexManifest {
   return out
 }
 
+func findPlugin(repolimit string, name string) PluginFullManifest {
+  var out PluginFullManifest
+  //fmt.Println("Find Plugin", name)
+  for index := range(Config.RepoList) {
+    repo := Config.RepoList[index]
+    if repolimit != "" && repo.Name != repolimit { continue } //wrong repository
+    //Got a specific plugin to find and show details for
+    plugin, err := FetchPluginManifest(repo, name)
+    if err != nil { continue } //not available in this repo
+    plugin.RepoName = repo.Name
+    return plugin
+  }
+  return out
+}
+
 func pluginUpdates() map[string]PluginIndexManifest {
   out := make(map[string]PluginIndexManifest)
   installed := installedPlugins()
   if len(installed) <1 { return out } //nothing installed
-  available := availablePlugins()
+  available := availablePlugins("")
   for name, plugin := range installed {
     if aplugin, ok := available[name] ; ok {
       //Plugin available remotely. Compare release dates to see if remote is newer
-      if aplugin.VersionReleased.After(plugin.VersionReleased) {
+      if Timestamp(aplugin.VersionReleased).After( Timestamp(plugin.VersionReleased)) {
         //Remote plugin newer - flag it as an update
         out[name] = aplugin
       }

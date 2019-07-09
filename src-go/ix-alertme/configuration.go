@@ -1,6 +1,7 @@
 package main
 
 import(
+	//"fmt"
 	"encoding/json"
 	"os"
 	"io/ioutil"
@@ -30,7 +31,9 @@ func loadConfiguration(location string) Configuration {
   if config.InstallDir == "" { config.InstallDir = "/usr/local/ix-alertme/plugins" }
 
   //Append the default repository to the list if it is empty
+  //fmt.Println("Repos:", config.RepoList, len(config.RepoList))
   if len(config.RepoList) <1 {
+    //fmt.Println("Repo List Empty")
     var defaultrepo Repo
     defaultrepo.Name = "ix-alertme"
     defaultrepo.Url = "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins"

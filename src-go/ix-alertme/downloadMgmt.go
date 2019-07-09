@@ -1,6 +1,7 @@
 package main
 
 import (
+	//"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -34,14 +35,18 @@ func DownloadFile(filepath string, url string) error {
 func FetchPluginIndex(repo Repo) ([]PluginIndexManifest, error) {
     var info []PluginIndexManifest
     // Get the data
+    //fmt.Println("Fetch Plugin index:", repo.Url+"/index.json")
     resp, err := http.Get(repo.Url+"/index.json")
     if err != nil {
+        //fmt.Println(" - Error Fetching index", err)
         return info, err
     }
     defer resp.Body.Close()
     body, err := ioutil.ReadAll(resp.Body)
+    if err != nil { return info, err }
+    //fmt.Println("Got Body:", string(body))
     //Now convert the response into the data structure and return it
-    err = json.Unmarshal(body, info)
+    err = json.Unmarshal(body, &info)
     return info, err
 }
 
