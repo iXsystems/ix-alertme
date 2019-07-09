@@ -1,0 +1,25 @@
+{
+  "name" : "sendmail",
+  "summary" : "Plaintext email alerts",
+  "description" : "Send plaintext email alerts via SSMTP and sendmail.",
+  "icon_url" : "",
+  "version" : "1.0",
+  "date_released" : "2019-07-09",
+  "tags" : ["email","ssmtp", "sendmail", "plaintext"],
+  "maintainer" : [
+    { "name" : "Ken Moore", "email" : "ken@ixsystems.com" },
+    { "name" : "iXsystems", "email" : "support@ixsystems.com", "site_url" : "http://ixsystems.com" }
+  ],
+  "exec" : {
+    "filename" : "send-email"
+    "url" : "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins/sendmail/",
+    "sha256_checksum" : ""
+  },
+  "depends" : {
+    "freebsd" : [
+      { "pkg" : "ssmtp", "port" : "mail/ssmtp" },
+      { "pkg" : "sendmail", "port" : "mail/sendmail" },
+      { "pkg" : "jq", "port" : "textproc/jq" }
+    ]
+  }
+}

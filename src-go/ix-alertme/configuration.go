@@ -29,11 +29,13 @@ func loadConfiguration(location string) Configuration {
   //Load the default values if not specified
   if config.InstallDir == "" { config.InstallDir = "/usr/local/ix-alertme/plugins" }
 
-  //Append the default repository to the list (lowest priority)
-  var defaultrepo Repo
+  //Append the default repository to the list if it is empty
+  if len(config.RepoList) <1 {
+    var defaultrepo Repo
     defaultrepo.Name = "ix-alertme"
     defaultrepo.Url = "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins"
-  config.RepoList = append(config.RepoList, defaultrepo)
+    config.RepoList = append(config.RepoList, defaultrepo)
+  }
   //Return the configuration
   return config
 }

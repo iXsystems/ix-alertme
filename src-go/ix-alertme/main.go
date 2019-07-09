@@ -10,21 +10,21 @@ import (
 var Config Configuration
 
 func CheckForUpdates(){
-  fmt.Println("Check For Updates")
+  //fmt.Println("Check For Updates")
   updates := pluginUpdates()
   tmp, _ := json.Marshal(updates)
   fmt.Println( string(tmp) )
 }
 
 func ListRemotePlugins(){
-  fmt.Println("List Remote Plugins")
+  //fmt.Println("List Remote Plugins")
   updates := availablePlugins()
   tmp, _ := json.Marshal(updates)
   fmt.Println( string(tmp) )
 }
 
 func ListLocalPlugins(){
-  fmt.Println("List Local Plugins")
+  //fmt.Println("List Local Plugins")
   updates := installedPlugins()
   tmp, _ := json.Marshal(updates)
   fmt.Println( string(tmp) )
@@ -33,9 +33,9 @@ func ListLocalPlugins(){
 // Define all the CLI input flags and subcommands
 var (
   app = kingpin.New("ix-alertme", "Alert Notification Plugin System")
-  Configfile = *app.Flag("config", "Custom config file").Short('c').Default("/usr/local/etc/ix-alertme.json").String()
+  Configfile = *app.Flag("config", "Use alternate configuration file").Short('c').Default("/usr/local/etc/ix-alertme.json").String()
 
-  plugins 		= app.Command("plugins", "Manage Plugins")
+  plugins 		= app.Command("plugins", "Plugin Management Functionality")
   pluginsSearch 	= plugins.Command("search", "Search for available plugins")
   pluginsList 		= plugins.Command("list", "List all installed plugins")
   pluginsScan		= plugins.Command("scan", "Scan for updates to installed plugins")
@@ -43,6 +43,8 @@ var (
 
 func main() {
   app.Version("0.1")
+  app.UsageTemplate(kingpin.CompactUsageTemplate)
+  app.HelpFlag.Short('h')
   switch kingpin.MustParse(app.Parse(os.Args[1:])) {
     case pluginsSearch.FullCommand():
         ListRemotePlugins()
