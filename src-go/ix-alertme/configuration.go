@@ -28,7 +28,14 @@ func loadConfiguration(location string) Configuration {
     if err != nil { json.Unmarshal(tmp, config) }
   }
   //Load the default values if not specified
-  if config.InstallDir == "" { config.InstallDir = "/usr/local/ix-alertme/plugins" }
+  if config.InstallDir == "" { 
+    if os.Getuid() == 0 {
+      config.InstallDir = "/usr/local/ix-alertme/plugins"
+    } else {
+      config.InstallDir, _ = os.UserHomeDir();
+      config.InstallDir = config.InstallDir + "/.config/ix-alertme/plugins"
+    }
+  }
 
   //Append the default repository to the list if it is empty
   //fmt.Println("Repos:", config.RepoList, len(config.RepoList))

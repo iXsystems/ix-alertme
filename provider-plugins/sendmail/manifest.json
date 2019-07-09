@@ -23,6 +23,6 @@
     ]
   },
   "api" : [
-    { "fieldname" : "rootaddress", "description" : "From address for the emails", "type" : "string", "is_required" : true }
+    { "fieldname" : "rootaddress", "description" : "Sender address for the email", "type" : "string", "is_required" : true }
   ]
 }

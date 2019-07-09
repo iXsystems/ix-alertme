@@ -6,11 +6,15 @@ import (
 	"net/http"
 	"os"
 	"encoding/json"
+	"path"
+	"crypto/sha256"
+	"errors"
+	"github.com/mholt/archiver"
 )
 
 // DownloadFile will download a url to a local file. It's efficient because it will
 // write as it downloads and not load the whole file into memory.
-func DownloadFile(filepath string, url string) error {
+func DownloadFile(filepath string, url string, checksum string) error {
     // Get the data
     resp, err := http.Get(url)
     if err != nil {
@@ -29,6 +33,20 @@ func DownloadFile(filepath string, url string) error {
 
     // Write the body to file
     _, err = io.Copy(out, resp.Body)
+    // Compare the checksum if provided
+    if checksum != "" {
+      f, err := os.Open("file.txt")
+      if err == nil {
+        defer f.Close()
+        h := sha256.New()
+        if _, err := io.Copy(h, f); err == nil {
+          if string(h.Sum(nil)) != checksum {
+            err = errors.New("Checksum Mismatch: "+filepath)
+            os.Remove(filepath)
+          }
+        }
+      }
+    } //end checksum empty check
     return err
 }
 
@@ -71,4 +89,26 @@ func FetchPluginManifest(repo Repo, name string) (PluginFullManifest, error) {
       PrintError( "Plugin manifest malformed: "+name+", From Repo: "+repo.Name )
     }
     return info, err
+}
+
+func InstallFileDependency( file FileDependency, installdir string) error {
+  var err error = nil
+  if file.ExtractWith == "" {
+    // Archive. Need to download to a temporary dir and then extract into install dir
+    tmpfile := os.TempDir()+"/"+path.Base( path.Clean(file.RemoteUrl) )
+    err = DownloadFile(tmpfile, file.RemoteUrl, file.Sha256)
+    if err == nil {
+      err = archiver.Unarchive(tmpfile, installdir)
+    }
+    os.Remove(tmpfile) //finished with the temporary file
+  } else {
+    // File. Just download directly to the install dir
+    filename := file.Filename
+    if filename == "" {
+      //Pull the filename off of the URL
+      filename = path.Base( path.Clean(file.RemoteUrl) )
+    }
+    err = DownloadFile(installdir+"/"+filename, file.RemoteUrl, file.Sha256)
+  }
+  return err
 }

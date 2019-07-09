@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"time"
 	"os"
 	"io/ioutil"
 	"encoding/json"
+	"errors"
 )
 type PkgDependency struct {
 	PkgName string	`json:"pkg"`
@@ -72,25 +74,28 @@ func Timestamp(t string) time.Time {
   return time.Now().AddDate(-10,0,0) //Now minus 10 years
 }
 
-func installedPlugins() map[string]PluginFullManifest {
+func installedPlugins() (map[string]PluginFullManifest, error) {
   out := make(map[string]PluginFullManifest)
   filelist, _ := ioutil.ReadDir(Config.InstallDir)
   for i := range(filelist) {
     if filelist[i].IsDir() {
-      if _, err := os.Stat(Config.InstallDir+"/"+filelist[i].Name()+"/manifest.json") ; os.IsExist(err) {
-	tmp, err := ioutil.ReadFile(Config.InstallDir+"/"+filelist[i].Name()+"/manifest.json")
+      //PrintDebug("Check Dir: "+Config.InstallDir+"/"+filelist[i].Name()+"/manifest.json")
+      if _, err := os.Stat(Config.InstallDir+"/"+filelist[i].Name()+"/manifest.json") ; err == nil {
+        tmp, err := ioutil.ReadFile(Config.InstallDir+"/"+filelist[i].Name()+"/manifest.json")
+        //PrintDebug("Read File:"+string(tmp))
         if err != nil { continue }
         var tman PluginFullManifest
-         json.Unmarshal(tmp, tman)
+         json.Unmarshal(tmp, &tman)
          if(tman.Name != ""){ out[tman.Name] = tman }
       }
     }
   }
-  return out
+  return out, nil
 }
 
-func availablePlugins(repolimit string) map[string]PluginIndexManifest {
+func availablePlugins(repolimit string) (map[string]PluginIndexManifest, error) {
   out := make(map[string]PluginIndexManifest)
+  var err error
   for index := range(Config.RepoList) {
     repo := Config.RepoList[index]
     if repolimit != "" && repo.Name != repolimit { continue } //wrong repository
@@ -105,11 +110,12 @@ func availablePlugins(repolimit string) map[string]PluginIndexManifest {
       }
     }
   }
-  return out
+  return out, err
 }
 
-func findPlugin(repolimit string, name string) PluginFullManifest {
+func findPlugin(repolimit string, name string) (PluginFullManifest, error) {
   var out PluginFullManifest
+  var err error
   for index := range(Config.RepoList) {
     repo := Config.RepoList[index]
     if repolimit != "" && repo.Name != repolimit { continue } //wrong repository
@@ -117,16 +123,17 @@ func findPlugin(repolimit string, name string) PluginFullManifest {
     plugin, err := FetchPluginManifest(repo, name)
     if err != nil { continue } //not available in this repo
     plugin.RepoName = repo.Name
-    return plugin
+    return plugin, nil
   }
-  return out
+  return out, err
 }
 
-func pluginUpdates() map[string]PluginIndexManifest {
+func pluginUpdates() (map[string]PluginIndexManifest, error) {
   out := make(map[string]PluginIndexManifest)
-  installed := installedPlugins()
-  if len(installed) <1 { return out } //nothing installed
-  available := availablePlugins("")
+  var err error
+  installed, err := installedPlugins()
+  if len(installed) <1 { return out, nil } //nothing installed
+  available, err := availablePlugins("")
   for name, plugin := range installed {
     if aplugin, ok := available[name] ; ok {
       //Plugin available remotely. Compare release dates to see if remote is newer
@@ -139,5 +146,69 @@ func pluginUpdates() map[string]PluginIndexManifest {
       out[name] = aplugin //empty structure
     }
   }
-  return out
+  return out, err
 }
+
+func uninstallPlugin(name string) error {
+  installdir := Config.InstallDir+"/"+name
+  err := os.RemoveAll(installdir)
+  //Optional Later - uninstall package dependencies
+  // Needs special handling to prevent dependency breakage for other plugins
+  if err == nil {
+    fmt.Println("Plugin removed: ", name)
+  }
+  return err
+}
+
+func installPlugin(name string, repolimit string) error {
+  plugin, _ := findPlugin(repolimit, name)
+  if plugin.Name == "" {
+    //Could not find plugin to install
+    return errors.New("Plugin Unavailable:"+name)
+  }
+  installdir := Config.InstallDir+"/"+name
+  var err error
+  err = nil
+  // Verify that the plugin is not already installed
+
+  // Perform installation
+    //Create the directory
+    err = os.MkdirAll(installdir, 0744)
+    // Install FreeBSD packages
+    for i := range(plugin.Depends.Pkg) {
+      if err != nil { break }
+      pkg := plugin.Depends.Pkg[i]
+      // See if the pkg is already installed
+      PrintDebug("TODO - Check for package: "+pkg.PkgName)
+      // Install the pkg if necessary
+
+    }
+    // Download any archives into the install dir
+    for i := range(plugin.Depends.File) {
+      if err != nil { break }
+      err = InstallFileDependency(plugin.Depends.File[i], installdir+"/files")
+    }
+    // Download any files into the install dir
+    for i := range(plugin.Depends.Archive) {
+      if err != nil { break }
+      err = InstallFileDependency(plugin.Depends.Archive[i], installdir+"/files")
+    }
+    // Download the exec file into the install dir
+    if err == nil {
+      err = InstallFileDependency(plugin.Exec, installdir)
+    }
+    // Save the manifest into the install dir
+    if err == nil {
+      tmp, _ := json.Marshal(plugin)
+      err = ioutil.WriteFile(installdir+"/manifest.json", tmp, 0644)
+    } else {
+      // Had Error: Cleanup the partially-installed plugin
+      os.RemoveAll(installdir)
+    }
+  if err == nil {
+    fmt.Println("Plugin installed: ", name)
+  }
+  return err
+}
+
+
