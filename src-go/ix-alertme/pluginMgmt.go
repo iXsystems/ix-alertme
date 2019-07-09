@@ -1,7 +1,6 @@
 package main
 
 import (
-	//"fmt"
 	"time"
 	"os"
 	"io/ioutil"
@@ -41,6 +40,13 @@ type Person struct {
 	Url	string	`json:"site_url"`
 }
 
+type SetOpts struct {
+	Field string	`json:"fieldname"`
+	Description string	`json:"description"`
+	Default interface{}	`json:"default"`
+	Type interface{}	`json:"type"`
+	Required bool		`json:"is_required"`
+}
 type PluginFullManifest struct {
 	Name string				`json:"name"`
 	Summary string			`json:"summary"`
@@ -48,10 +54,12 @@ type PluginFullManifest struct {
 	IconUrl string				`json:"icon_url"`
 	Version string				`json:"version"`
 	VersionReleased string		`json:"date_released"`
+	Tags []string				`json:"tags"`
 	Maintainers []Person		`json:"maintainer"`
 	RepoName string			`json:"repository"`
 	Depends	PluginDependencies	`json:"depends"`
 	Exec FileDependency			`json:"exec"`
+	API []SetOpts				`json:"api"`
 }
 
 func Timestamp(t string) time.Time {
@@ -83,7 +91,6 @@ func installedPlugins() map[string]PluginFullManifest {
 
 func availablePlugins(repolimit string) map[string]PluginIndexManifest {
   out := make(map[string]PluginIndexManifest)
-  //fmt.Println("Available Repos", Config.RepoList)
   for index := range(Config.RepoList) {
     repo := Config.RepoList[index]
     if repolimit != "" && repo.Name != repolimit { continue } //wrong repository
@@ -103,7 +110,6 @@ func availablePlugins(repolimit string) map[string]PluginIndexManifest {
 
 func findPlugin(repolimit string, name string) PluginFullManifest {
   var out PluginFullManifest
-  //fmt.Println("Find Plugin", name)
   for index := range(Config.RepoList) {
     repo := Config.RepoList[index]
     if repolimit != "" && repo.Name != repolimit { continue } //wrong repository

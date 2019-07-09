@@ -9,6 +9,14 @@ import (
 
 var Config Configuration
 
+// Internal simplification functions
+func PrintDebug(error string){
+  fmt.Fprintln(os.Stderr, "[Debug] "+error)
+}
+func PrintError(error string){
+  fmt.Fprintln(os.Stderr, "[Error] "+error)
+}
+
 func CheckForUpdates(){
   //fmt.Println("Check For Updates")
   updates := pluginUpdates()

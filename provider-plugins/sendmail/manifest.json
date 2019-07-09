@@ -22,12 +22,7 @@
       { "pkg" : "jq", "port" : "textproc/jq" }
     ]
   },
-  "settings" : {
-    "defaults" : {
-
-    },
-    "details" : {
-      "rootaddress" : ""
-    }
-  }
+  "api" : [
+    { "fieldname" : "rootaddress", "description" : "From address for the emails", "type" : "string", "is_required" : true }
+  ]
 }
