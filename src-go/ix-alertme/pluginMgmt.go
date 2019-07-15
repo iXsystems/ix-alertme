@@ -12,13 +12,9 @@ import (
 type FileDependency struct {
 	Filename string		`json:"filename"`
 	RemoteUrl string		`json:"url"`
-	isArchive bool			`json:"extract_with"`
+	IsArchive bool			`json:"extract"`
+        IsCompressed bool	`json:"decompress"`
 	Sha256 string			`json:"sha256_checksum"`
-}
-
-type PluginDependencies struct {
-	File []FileDependency		`json:"file"`
-	Archive []FileDependency	`json:"archive"`
 }
 
 type PluginIndexManifest struct {
@@ -39,7 +35,7 @@ type Person struct {
 
 type SetOpts struct {
 	Field string	`json:"fieldname"`
-	Description string	`json:"description"`
+	Description string	`json:"summary"`
 	Default interface{}	`json:"default"`
 	Type interface{}	`json:"type"`
 	Required bool		`json:"is_required"`
@@ -54,7 +50,7 @@ type PluginFullManifest struct {
 	Tags []string				`json:"tags"`
 	Maintainers []Person		`json:"maintainer"`
 	RepoName string			`json:"repository"`
-	Depends	PluginDependencies	`json:"depends"`
+	Depends	[]FileDependency	`json:"depends"`
 	Exec string				`json:"exec"`
 	API []SetOpts				`json:"api"`
 }
@@ -176,14 +172,9 @@ func installPlugin(name string, repolimit string, removeold bool) error {
     //Create the directory
     err = os.MkdirAll(installdir, 0744)
     // Download any files into the install dir
-    for i := range(plugin.Depends.File) {
+    for i := range(plugin.Depends) {
       if err != nil { break }
-      err = InstallFileDependency(plugin.Depends.File[i], installdir)
-    }
-    // Download any archives into the install dir
-    for i := range(plugin.Depends.Archive) {
-      if err != nil { break }
-      err = InstallFileDependency(plugin.Depends.Archive[i], installdir)
+      err = InstallFileDependency(plugin.Depends[i], installdir)
     }
     // Save the manifest into the install dir
     if err == nil {
@@ -209,4 +200,3 @@ func updatePlugin(name string) error {
   }
   return err
 }
-

@@ -11,16 +11,15 @@
     { "name" : "iXsystems", "email" : "support@ixsystems.com", "site_url" : "http://ixsystems.com" }
   ],
   "exec" : "send-email",
-  "depends" : {
-    "files" : [
-      {
-        "filename" : "send-email",
-        "url" : "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins/sendmail/send-email",
-        "sha256_checksum" : ""
-      }
-    ]
-  },
+  "depends" : [
+    {
+      "filename" : "send-email",
+      "url" : "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins/sendmail/send-email",
+      "sha256_checksum" : ""
+    }
+  ],
   "api" : [
-    { "fieldname" : "rootaddress", "description" : "Sender address for the email", "type" : "string", "is_required" : true }
+    { "fieldname" : "rootaddress", "description" : "Sender address for the email", "type" : "string", "is_required" : true },
+    { "fieldname" : "rootaddress", "description" : "Sender address for the email", "type" : "string", "is_required" : true },
   ]
 }
