@@ -8,20 +8,15 @@ import (
 	"encoding/json"
 	"errors"
 )
-type PkgDependency struct {
-	PkgName string	`json:"pkg"`
-	PortOrigin string	`json:"port"`
-}
 
 type FileDependency struct {
 	Filename string		`json:"filename"`
 	RemoteUrl string		`json:"url"`
-	ExtractWith string		`json:"extract_with"`
+	isArchive bool			`json:"extract_with"`
 	Sha256 string			`json:"sha256_checksum"`
 }
 
 type PluginDependencies struct {
-	Pkg []PkgDependency		`json:"freebsd"`
 	File []FileDependency		`json:"file"`
 	Archive []FileDependency	`json:"archive"`
 }
@@ -60,7 +55,7 @@ type PluginFullManifest struct {
 	Maintainers []Person		`json:"maintainer"`
 	RepoName string			`json:"repository"`
 	Depends	PluginDependencies	`json:"depends"`
-	Exec FileDependency			`json:"exec"`
+	Exec string				`json:"exec"`
 	API []SetOpts				`json:"api"`
 }
 
@@ -160,42 +155,35 @@ func uninstallPlugin(name string) error {
   return err
 }
 
-func installPlugin(name string, repolimit string) error {
+func installPlugin(name string, repolimit string, removeold bool) error {
   plugin, _ := findPlugin(repolimit, name)
   if plugin.Name == "" {
     //Could not find plugin to install
-    return errors.New("Plugin Unavailable:"+name)
+    return errors.New("Plugin Unavailable: "+name)
   }
   installdir := Config.InstallDir+"/"+name
   var err error
   err = nil
   // Verify that the plugin is not already installed
-
+  if _, err := os.Stat(installdir); os.IsExist(err) {
+    if removeold { 
+      uninstallPlugin(name) 
+    } else {
+      return errors.New("Plugin already installed: "+name)
+    }
+  }
   // Perform installation
     //Create the directory
     err = os.MkdirAll(installdir, 0744)
-    // Install FreeBSD packages
-    for i := range(plugin.Depends.Pkg) {
-      if err != nil { break }
-      pkg := plugin.Depends.Pkg[i]
-      // See if the pkg is already installed
-      PrintDebug("TODO - Check for package: "+pkg.PkgName)
-      // Install the pkg if necessary
-
-    }
-    // Download any archives into the install dir
+    // Download any files into the install dir
     for i := range(plugin.Depends.File) {
       if err != nil { break }
-      err = InstallFileDependency(plugin.Depends.File[i], installdir+"/files")
+      err = InstallFileDependency(plugin.Depends.File[i], installdir)
     }
-    // Download any files into the install dir
+    // Download any archives into the install dir
     for i := range(plugin.Depends.Archive) {
       if err != nil { break }
-      err = InstallFileDependency(plugin.Depends.Archive[i], installdir+"/files")
-    }
-    // Download the exec file into the install dir
-    if err == nil {
-      err = InstallFileDependency(plugin.Exec, installdir)
+      err = InstallFileDependency(plugin.Depends.Archive[i], installdir)
     }
     // Save the manifest into the install dir
     if err == nil {
@@ -211,4 +199,14 @@ func installPlugin(name string, repolimit string) error {
   return err
 }
 
+func updatePlugin(name string) error {
+  avail, err := pluginUpdates()
+  if manifest, ok := avail[name]; ok {
+    fmt.Println("Updating Plugin: "+name)
+    installPlugin(name, manifest.RepoName, true)
+  } else {
+    err = errors.New("No updates available for plugin: "+name)
+  }
+  return err
+}
 

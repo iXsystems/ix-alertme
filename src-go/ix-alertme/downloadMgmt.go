@@ -93,7 +93,7 @@ func FetchPluginManifest(repo Repo, name string) (PluginFullManifest, error) {
 
 func InstallFileDependency( file FileDependency, installdir string) error {
   var err error = nil
-  if file.ExtractWith == "" {
+  if file.isArchive {
     // Archive. Need to download to a temporary dir and then extract into install dir
     tmpfile := os.TempDir()+"/"+path.Base( path.Clean(file.RemoteUrl) )
     err = DownloadFile(tmpfile, file.RemoteUrl, file.Sha256)

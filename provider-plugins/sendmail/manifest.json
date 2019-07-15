@@ -10,16 +10,14 @@
     { "name" : "Ken Moore", "email" : "ken@ixsystems.com" },
     { "name" : "iXsystems", "email" : "support@ixsystems.com", "site_url" : "http://ixsystems.com" }
   ],
-  "exec" : {
-    "filename" : "send-email",
-    "url" : "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins/sendmail/plugin.sh",
-    "sha256_checksum" : ""
-  },
+  "exec" : "send-email",
   "depends" : {
-    "freebsd" : [
-      { "pkg" : "ssmtp", "port" : "mail/ssmtp" },
-      { "pkg" : "sendmail", "port" : "mail/sendmail" },
-      { "pkg" : "jq", "port" : "textproc/jq" }
+    "files" : [
+      {
+        "filename" : "send-email",
+        "url" : "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins/sendmail/send-email",
+        "sha256_checksum" : ""
+      }
     ]
   },
   "api" : [

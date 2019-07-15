@@ -1,7 +1,6 @@
 package main
 
 import(
-	//"fmt"
 	"encoding/json"
 	"os"
 	"io/ioutil"
@@ -23,9 +22,9 @@ func loadConfiguration(location string) Configuration {
   //Load the local config file
   file, err := os.Open(location)
   defer file.Close()
-  if err != nil {
+  if err == nil {
     tmp, err := ioutil.ReadAll(file)
-    if err != nil { json.Unmarshal(tmp, config) }
+    if err == nil { json.Unmarshal(tmp, config) }
   }
   //Load the default values if not specified
   if config.InstallDir == "" { 
