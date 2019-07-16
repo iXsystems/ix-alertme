@@ -1,1 +1,1 @@
-[{"name":"sendmail","summary":"Plaintext email alerts","description":"Send plaintext email alerts via SSMTP and sendmail.","icon_url":"","version":"1.0","date_released":"2019-07-09","tags":["email","ssmtp","sendmail","plaintext"]}]
+[{"name":"sendmail","summary":"Email alerts","description":"Send email alerts via SMTP.","icon_url":"","version":"1.0","date_released":"2019-07-19","tags":["email","ssmtp","sendmail","plaintext"]}]
