@@ -25,12 +25,12 @@ Each plugin provides a single JSON manifest file with all the necessary informat
 * ***depends*** (Json Array of Objects) : This object lists the pieces of the plugin itself. Everything listed here will get extracted into the same directory. The location of the install directory **is not consistent** between systems, nor is it fixed for a single system, so that a plugin could be installed multiple times on the same system as needed. Object format for each dependency is listed below
    * ***url*** (string) : URL for where to fetch the file from (always use HTTPS if possible)
    * ***sha256_checksum*** (string) : Checksum of the file for post-download verification.
-   * ***extract*** (boolean) : Flag whether the downloaded file needs to be extracted (such as when downloading an archive of files).
+   * ***extract*** (boolean) : [optional] Flag whether the downloaded file needs to be extracted (such as when downloading an archive of files). False by default.
       * Supported file formats: *.zip, *.tar (and compressed variants like *.tar.gz), and *.rar
       * See [https://github.com/mholt/archiver](https://github.com/mholt/archiver) for the full list of supported formats.
-   * ***decompress*** (boolean) : Flag whether the downloaded file needs to be decompressed. For compressed archives, use the "extract" flag instead.
+   * ***decompress*** (boolean) : [optional] Flag whether the downloaded file needs to be decompressed. For compressed archives, use the "extract" flag instead. False by default.
       * See [https://github.com/mholt/archiver](https://github.com/mholt/archiver) for the full list of supported formats.
-   * ***filename*** (string) : [optional] If extraction is not needed, this can be provided to change the name of the resulting file in the plugin directory.
+   * ***filename*** (string) : [optional] If extraction and decompression are not needed, this can be provided to change the name of the resulting file in the plugin directory.
 * ***exec*** (string) : Name of the binary from the plugin directory to execute. Must be installed via a "depends" entry.
 * ***api*** (Json Array of Objects) : List of API fields which the plugin supports or needs in order to function. Object format for a single api entry is listed below:
    * ***fieldname*** (string) : Name of the JSON field for this API input.
@@ -55,5 +55,25 @@ Each plugin provides a single JSON manifest file with all the necessary informat
 
 #### Manifest Example
 ```
-
+{
+  "name" : "example",
+  "summary" : "Example manifest",
+  "description" : "Example manifest for learning purposes. This can be copied as a template for future plugins as well.",
+  "icon_url" : "https://my.example.net/icon.png",
+  "version" : "1.0",
+  "date_released" : "2019-07-16",
+  "tags" : ["example","plugin","manifest"],
+  "maintainer" : [
+    {"name" : "John Doe", "email" : "john.doe@example.net", "site_url" : "http://my.example.net" }
+  ],
+  "depends" : [
+    { "url" : "https://my.example.net/alert-plugin-example", "filename" : "example_binary", "sha256_checksum" : "ABCDEFGHIJ123456789" }
+  ],
+  "exec" : "example_binary",
+  "api" : [
+    {"fieldname" : "booltest", "summary" : "Example of a true/false input", "type" : "bool", "default" : false },
+    {"fieldname" : "stringtest", "summary" : "Example of a string input", "type" : "", "default" : "default text" },
+    {"fieldname" : "integertest", "summary" : "Example of an integer input from 0-100", "type" : ["integer", 0, 100], "default" : 50 }
+  ]
+}
 ```

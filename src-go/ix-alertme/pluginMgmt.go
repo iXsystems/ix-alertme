@@ -25,6 +25,7 @@ type PluginIndexManifest struct {
 	Version string				`json:"version"`
 	VersionReleased string		`json:"date_released"`
 	RepoName string			`json:"repository"`
+	Tags	 []string				`json:"tags"`
 }
 
 type Person struct {
