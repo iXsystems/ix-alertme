@@ -1,14 +1,23 @@
 # Provider Plugins
-These are the manifest files and/or scripts needed to utilize backend providers
+These are the manifest files and/or scripts needed to utilize backend providers. Every plugin needs to be a completely self-contained tool which can be installed into any arbitrary directory on a target system. These plugins must also take a single JSON file as input, with a format specified below.
 
+## Plugin Input API
+```
+{
+  "text" : {
+    "html" : "<html encoding=Utf-8><p>Html Form of the alert</p></html>",
+    "plaintext" : "Plaintext form of the alert"
+  },
+  "settings" : {
+    "<custom_API_field>" : <value>
+  }
+}
+```
 
 ## Plugin Manifest
-Each plugin provides a single JSON manifest file with all the necessary information about the plugin itself (name, version, etc). The plugin script should also be included in the same directory as the manifest.
+Each plugin provides a single JSON manifest file with all the necessary information about the plugin itself (name, version, etc).
 
-### Manifest Format
-*See the `sample-manifest.json` file for a complete example*
-
-#### Field Details
+### Manifest Field Details
 * ***name*** (string) : Name of the plugin
 * ***summary*** (string) : Short summary of what the plugin does
 * ***description*** (string) : Longer description of what the plugin does
@@ -34,18 +43,20 @@ Each plugin provides a single JSON manifest file with all the necessary informat
 * ***exec*** (string) : Name of the binary from the plugin directory to execute. Must be installed via a "depends" entry.
 * ***api*** (Json Array of Objects) : List of API fields which the plugin supports or needs in order to function. Object format for a single api entry is listed below:
    * ***fieldname*** (string) : Name of the JSON field for this API input.
-   * ***is_required*** (boolean) : Indicate whether this field is required or not.
+   * ***is_required*** (boolean) : [optional] Indicate whether this field is required or not. False by default.
    * ***summary*** (string) : Short summary of how this field is used.
-   * ***type*** (see below) : This defines any rules/checks for validating the input
+   * ***is_array*** (boolean) : [optional] Indicate whether this field should be an array of values. False by default.
+      * Note that this flag may not be used with the special "Lists" type of inputs.
+   * ***type*** (see below) : This defines any rules/checks for validating the input(s)
       * *Numbers*
          * "integer" for an integer value, or ["integer", min, max] for a specific range of values
          * "float" for a decimel value, or ["float", min, max] for a specific range of values
       * *Text*
          * "" for any string value, or ["regex", "<regular_expression>"] for a string that exactly matches the regular expression.
-      * *Lists* : For a single selection from a list of available options
-         * ["list", A, B, C] to prompt the user to select one of the options (A, B, or C in this case)
-         * The options can have short summaries with the format [A, "Option A"]
-            * Example: ["list", ["A", "Option A details"], [ "SomeB", "Some Option B"] ]
+      * *Lists*
+         * ["select", A, B, C] to prompt the user to select **one** of the options (A, B, or C in this case)
+            * The options can have short summaries with the format [A, "Option A"]
+            * Example: ["select", ["A", "Option A details"], [ "SomeB", "Some Option B"] ]
       * *True/False*
          * "bool" indicates that a true/false value is required
    * ***default*** (anything - see examples) : [optional] Default value for this field if nothing is provided
@@ -53,7 +64,7 @@ Each plugin provides a single JSON manifest file with all the necessary informat
       * It is recommended to avoid using Json Objects as values, as these are not enforcable via the API check mechanisms.
 
 
-#### Manifest Example
+### Manifest Example
 ```
 {
   "name" : "example",
@@ -73,7 +84,8 @@ Each plugin provides a single JSON manifest file with all the necessary informat
   "api" : [
     {"fieldname" : "booltest", "summary" : "Example of a true/false input", "type" : "bool", "default" : false },
     {"fieldname" : "stringtest", "summary" : "Example of a string input", "type" : "", "default" : "default text" },
-    {"fieldname" : "integertest", "summary" : "Example of an integer input from 0-100", "type" : ["integer", 0, 100], "default" : 50 }
+    {"fieldname" : "integertest", "summary" : "Example of an integer input from 0-100", "type" : ["integer", 0, 100], "default" : 50 },
+    {"fieldname" : "selecttest", "summary" : "Example of a list selection input", "type" : ["select","A","B",["C","Option C Summary"]], "default" : "A" }
   ]
 }
 ```
