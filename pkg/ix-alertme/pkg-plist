@@ -1,0 +1,3 @@
+bin/ix-alertme
+%%SMTPMAIL%%ix-alertme/plugins/smtp-email/manifest.json
+%%SMTPMAIL%%ix-alertme/plugins/smtp-email/smtp-email

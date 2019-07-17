@@ -32,7 +32,7 @@ func loadConfiguration(location string) Configuration {
       config.InstallDir = "/usr/local/ix-alertme/plugins"
     } else {
       config.InstallDir, _ = os.UserHomeDir();
-      config.InstallDir = config.InstallDir + "/.config/ix-alertme/plugins"
+      config.InstallDir = config.InstallDir + "/.local/ix-alertme/plugins"
     }
   }
 
