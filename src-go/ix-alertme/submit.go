@@ -6,6 +6,7 @@ import(
 	"io/ioutil"
 	"os/exec"
 	"fmt"
+	"errors"
 )
 
 type AlertText struct {
@@ -16,6 +17,34 @@ type AlertText struct {
 type AlertAPI struct {
 	Text AlertText		`json:"text"`
 	Settings map[string]interface{}	`json:"settings"`
+}
+
+func validateSettings(plugin PluginFullManifest, alert AlertAPI) error {
+  for index := range(plugin.API) {
+    opt := plugin.API[index]
+    if val, ok := alert.Settings[opt.Field] ; ok {
+      // Verify the value/type of this field
+      switch(opt.Type){
+        case "":
+
+        case "list":
+
+	default:
+	  fmt.Println("Got Value: ", val)
+      }
+
+    } else {
+      //Field missing - see if there is a default value and add that in
+      if opt.Default != nil {
+        alert.Settings[opt.Field] = opt.Default //insert the default value
+
+      } else if opt.Required {
+        fmt.Println("["+plugin.Name+"] Missing API Setting: ", opt.Field)
+        return errors.New("Missing API")
+      }
+    }
+  }
+  return nil
 }
 
 func sendAlerts(settingsFile string, textFile string) error {
@@ -48,7 +77,11 @@ func sendAlerts(settingsFile string, textFile string) error {
         alert.Text = text
         alert.Settings, ok = set.(map[string]interface{})
       if ok {
-        submitAlert(manifest, alert) //This will run in a parallel thead, so many of these can run at a time
+        if err = validateSettings(manifest, alert) ; err == nil {
+          submitAlert(manifest, alert)
+        } else {
+          fmt.Println("[Skipped] Invalid Plugin Settings: ", plugin)
+        }
       }
     }
   }

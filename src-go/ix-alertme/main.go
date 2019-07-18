@@ -68,7 +68,7 @@ var (
       pluginsRemoveName = pluginsRemove.Arg("plugin", "Name of the plugin to remove").Required().String()
 
   submit			= app.Command("send", "Send out alerts")
-    submitSettings	= submit.Flag("settings", "Path to settings file for alerts").Required().Short('f').String();
+    submitSettings	= submit.Flag("settings", "Path to settings file for alerts").Default("").Short('s').String();
     submitText		= submit.Arg("alert", "Path to file containing alert text").Required().String()
 )
 
@@ -98,7 +98,11 @@ func main() {
 	err = updatePlugin(*pluginsUpdateName)
     case submit.FullCommand():
 	Config = loadConfiguration(*Configfile)
-        err = sendAlerts(*submitSettings, *submitText)
+        if *submitSettings == "" { 
+          err = sendAlerts(*Configfile, *submitText) //use the same configfile for the settings if not supplied
+        } else {
+          err = sendAlerts(*submitSettings, *submitText)
+        }
     default:
       app.Fatalf("%s","Unknown subcommand")
   }
