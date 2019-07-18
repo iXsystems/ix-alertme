@@ -23,15 +23,15 @@ SMTPMAIL_DESC=	Bundle the smtp-email plugin into the package
 NO_BUILD=		yes
 
 do-install:
-	${INSTALL_PROGRAM} ${WRKSRC}/src-go/ix-alertme/ix-alertme ${STAGEDIR}${PREFIX}/bin/
+	${INSTALL_PROGRAM} ${WRKSRC}/src-go/ix-alertme/ix-alertme ${STAGEDIR}${PREFIX}/bin/ix-alertme
 
 post-install:
 .if ${PORT_OPTIONS:MSMTPMAIL}
-	${MKDIR} ${STAGEDIR}/${PREFIX}/${portname}/plugins/smtp-email
-	(cd ${WRKSRC}/provider-plugins/smtp-email &&
-	${COPYTREE_BIN} smtp-email ${STAGEDIR}/${PREFIX}/${portname}/plugins/smtp-email/smtp-email)
-	(cd ${WRKSRC}/provider-plugins/smtp-email &&
-	${COPYTREE_SHARE} manifest.json ${STAGEDIR}/${PREFIX}/${portname}/plugins/smtp-email/manifest.json)
+	${MKDIR} ${STAGEDIR}/${PREFIX}/${PORTNAME}/plugins/smtp-email
+	(cd ${WRKSRC}/provider-plugins/smtp-email && \
+	${INSTALL_PROGRAM} smtp-email ${STAGEDIR}/${PREFIX}/${PORTNAME}/plugins/smtp-email/smtp-email)
+	(cd ${WRKSRC}/provider-plugins/smtp-email && \
+	${CP} manifest.json ${STAGEDIR}/${PREFIX}/${PORTNAME}/plugins/smtp-email/manifest.json)
 .endif
 
 .include <bsd.port.mk>
