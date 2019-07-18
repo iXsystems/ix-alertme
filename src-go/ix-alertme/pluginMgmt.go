@@ -79,6 +79,7 @@ func installedPlugins() (map[string]PluginFullManifest, error) {
         var tman PluginFullManifest
          json.Unmarshal(tmp, &tman)
          if(tman.Name != ""){ out[tman.Name] = tman }
+         if(tman.RepoName == ""){ tman.RepoName = "ix-alertme" }
       }
     }
   }
