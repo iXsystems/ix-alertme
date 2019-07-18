@@ -27,11 +27,11 @@ do-install:
 
 post-install:
 .if ${PORT_OPTIONS:MSMTPMAIL}
-	${MKDIR} ${STAGEDIR}/${PREFIX}/${portname}/plugins/smtp-mail
+	${MKDIR} ${STAGEDIR}/${PREFIX}/${portname}/plugins/smtp-email
 	(cd ${WRKSRC}/provider-plugins/smtp-email &&
-	${COPYTREE_BIN} smtp-email ${STAGEDIR}/${PREFIX}/${portname}/plugins/smtp-mail/smtp-mail)
+	${COPYTREE_BIN} smtp-email ${STAGEDIR}/${PREFIX}/${portname}/plugins/smtp-email/smtp-email)
 	(cd ${WRKSRC}/provider-plugins/smtp-email &&
-	${COPYTREE_SHARE} manifest.json ${STAGEDIR}/${PREFIX}/${portname}/plugins/smtp-mail/manifest.json)
+	${COPYTREE_SHARE} manifest.json ${STAGEDIR}/${PREFIX}/${portname}/plugins/smtp-email/manifest.json)
 .endif
 
 .include <bsd.port.mk>
