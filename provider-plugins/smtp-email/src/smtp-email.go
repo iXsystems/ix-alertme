@@ -7,6 +7,7 @@ import (
 	"net/smtp"
 	"strings"
 	"strconv"
+	"fmt"
 )
 
 type API struct {
@@ -35,17 +36,16 @@ type AlertAPI struct {
 func readAPI(path string) AlertAPI {
   var api AlertAPI
   tmp, err := ioutil.ReadFile(os.Args[1])
-  if err != nil { os.Exit(1) } //cannot read input JSON
+  if err != nil { fmt.Println("Cannot read API file: ", path) ; os.Exit(1) } //cannot read input JSON
   err = json.Unmarshal(tmp, &api)
-  if err != nil { os.Exit(1) } //cannot read input JSON
+  if err != nil { fmt.Println("Cannot read API JSON: ", path) ; os.Exit(1) } //cannot read input JSON
   return api
 }
 
 func assembleBody(api AlertAPI) []byte {
-  body := api.Text.Html
-  if body == "" {
-    body = api.Text.PlainText
-  }
+  // This SMTP integration does not seem to support sending HTML content.
+  //  Prefer plaintext if it is available
+
   var lines []string
   lines = append(lines, "From: "+api.Settings.FromAddr)
   lines = append(lines, "To: "+strings.Join(api.Settings.ToAddr,",") )
@@ -53,6 +53,14 @@ func assembleBody(api AlertAPI) []byte {
     lines = append(lines, "Cc: "+strings.Join(api.Settings.CcAddr,",") )
   }
   lines = append(lines, "Subject: "+api.Settings.Subject )
+  body := api.Text.Html
+  if body == "" {
+    body = api.Text.PlainText
+  } else {
+    //Set the header lines to tag it as an html message
+    lines = append(lines, "Mime-Version: 1.0;")
+    lines = append(lines, "Content-Type: text/html; charset=\"UTF-8\";")
+  }
   lines = append(lines, "\r\n"+body)
 
   msg := []byte( strings.Join(lines, "\r\n")+"\r\n")
@@ -77,7 +85,12 @@ func main() {
   //Send the email(s)
   toall := append(api.Settings.ToAddr, api.Settings.BccAddr...)
   toall = append(toall, api.Settings.CcAddr...)
-  smtp.SendMail( api.Settings.Mailserver+":"+strconv.Itoa(api.Settings.MailserverPort), 
+  err := smtp.SendMail( api.Settings.Mailserver+":"+strconv.Itoa(api.Settings.MailserverPort), 
 		auth, api.Settings.FromAddr, 
 		toall, assembleBody(api) )
+  if err != nil {
+    fmt.Println("Error sending smtp-email:", err)
+    os.Exit(1)
+  }
+  os.Exit(0)
 }
