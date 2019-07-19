@@ -40,7 +40,9 @@ type SetOpts struct {
 	Default interface{}	`json:"default"`
 	Type interface{}	`json:"type"`
 	Required bool		`json:"is_required"`
+	IsArray bool		`json:"is_array"`
 }
+
 type PluginFullManifest struct {
 	Name string				`json:"name"`
 	Summary string			`json:"summary"`

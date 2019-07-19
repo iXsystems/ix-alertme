@@ -70,6 +70,7 @@ var (
   submit			= app.Command("send", "Send out alerts")
     submitSettings	= submit.Flag("settings", "Path to settings file for alerts").Default("").Short('s').String();
     submitText		= submit.Arg("alert", "Path to file containing alert text").Required().String()
+    submitFake		= submit.Flag("dry-run", "Do not actually submit the alert").Short('d').Bool()
 )
 
 func main() {
@@ -99,9 +100,9 @@ func main() {
     case submit.FullCommand():
 	Config = loadConfiguration(*Configfile)
         if *submitSettings == "" { 
-          err = sendAlerts(*Configfile, *submitText) //use the same configfile for the settings if not supplied
+          err = sendAlerts(*Configfile, *submitText, *submitFake) //use the same configfile for the settings if not supplied
         } else {
-          err = sendAlerts(*submitSettings, *submitText)
+          err = sendAlerts(*submitSettings, *submitText, *submitFake)
         }
     default:
       app.Fatalf("%s","Unknown subcommand")

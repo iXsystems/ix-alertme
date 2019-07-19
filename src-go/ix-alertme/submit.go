@@ -7,6 +7,7 @@ import(
 	"os/exec"
 	"fmt"
 	"errors"
+	"reflect"
 )
 
 type AlertText struct {
@@ -19,20 +20,68 @@ type AlertAPI struct {
 	Settings map[string]interface{}	`json:"settings"`
 }
 
+func validateValue(opt SetOpts, val interface{}, inslice bool) bool {
+  vtyp := reflect.ValueOf(val)
+  ok := false
+  if !inslice && opt.IsArray && vtyp.Kind()==reflect.Slice {
+    //Need to check each value in this slice
+    for elem := range( val.([]interface{}) ) {
+      ok := validateValue(opt, val.([]interface{})[elem], true)
+      if !ok { break }
+    }
+
+  } else {
+    // Verify the value/type of this field
+    needtyp := ""
+    if reflect.ValueOf(opt.Type).Kind() == reflect.Slice {
+      needtyp, ok = opt.Type.([]interface{})[0].(string)
+    } else {
+      needtyp, ok = opt.Type.(string)
+    }
+    if !ok { return false } //could not read type of field
+    switch(needtyp){
+      case "bool":
+        _, ok = val.(bool)
+      case "integer":
+        _, ok = val.(int)
+      case "float":
+        _, ok = val.(float32)
+      case "":
+        _, ok = val.(string)
+      case "regex":
+        _, ok = val.(string)
+      case "select":
+        list, _ := opt.Type.([]interface{})
+        for index := range(list) {
+          if index <1 {continue } //skip the initial type field (already used)
+          if val == list[index] {
+            //got an exact match
+            ok = true 
+            break
+          } else if reflect.ValueOf(list[index]).Kind() == reflect.Slice {
+            // Got the expanded type where there is a description of the option in the second field
+            if val == list[index].([]interface{})[0] {
+              ok = true 
+              break
+            }
+          }
+        }
+
+      default:
+        fmt.Println("Unknown type of option: ", needtyp, "Provided Value: ", val)
+    }
+  }
+  return ok
+}
+
 func validateSettings(plugin PluginFullManifest, alert AlertAPI) error {
   for index := range(plugin.API) {
     opt := plugin.API[index]
     if val, ok := alert.Settings[opt.Field] ; ok {
-      // Verify the value/type of this field
-      switch(opt.Type){
-        case "":
-
-        case "list":
-
-	default:
-	  fmt.Println("Got Value: ", val)
+      if ! validateValue(opt, val, false){
+        fmt.Println("["+plugin.Name+"] Invalid API Setting: ", opt.Field)
+        return errors.New("Invalid API")
       }
-
     } else {
       //Field missing - see if there is a default value and add that in
       if opt.Default != nil {
@@ -47,7 +96,7 @@ func validateSettings(plugin PluginFullManifest, alert AlertAPI) error {
   return nil
 }
 
-func sendAlerts(settingsFile string, textFile string) error {
+func sendAlerts(settingsFile string, textFile string, checkonly bool) error {
   // Load the local settings file
   settings := make(map[string]interface{})
   file, err := os.Open(settingsFile)
@@ -78,7 +127,12 @@ func sendAlerts(settingsFile string, textFile string) error {
         alert.Settings, ok = set.(map[string]interface{})
       if ok {
         if err = validateSettings(manifest, alert) ; err == nil {
-          submitAlert(manifest, alert)
+          if !checkonly {
+            fmt.Println("Sending alert via plugin: ", plugin)
+            submitAlert(manifest, alert)
+          } else {
+            fmt.Println("Would send alert via plugin: ", plugin)
+          }
         } else {
           fmt.Println("[Skipped] Invalid Plugin Settings: ", plugin)
         }
