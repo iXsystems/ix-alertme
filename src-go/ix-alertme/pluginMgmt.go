@@ -36,8 +36,8 @@ type Person struct {
 
 type SetOptVal struct {
 	Type string		`json:"type"`
-	Min float32		`json:"min,omitempty"`
-	Max float32		`json:"max,omitempty"`
+	Min *float32		`json:"min,omitempty"`
+	Max *float32		`json:"max,omitempty"`
 	Regex string		`json:"regex,omitempty"`
 	Select []interface{}	`json:"select,omitempty"`
 	Summary []string	`json:"summary,omitempty"`
