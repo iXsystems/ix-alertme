@@ -34,11 +34,20 @@ type Person struct {
 	Url	string	`json:"site_url"`
 }
 
+type SetOptVal struct {
+	Type string		`json:"type"`
+	Min float32		`json:"min,omitempty"`
+	Max float32		`json:"max,omitempty"`
+	Regex string		`json:"regex,omitempty"`
+	Select []interface{}	`json:"select,omitempty"`
+	Summary []string	`json:"summary,omitempty"`
+}
+
 type SetOpts struct {
 	Field string	`json:"fieldname"`
 	Description string	`json:"summary"`
 	Default interface{}	`json:"default"`
-	Type interface{}	`json:"type"`
+	Value SetOptVal	`json:"value"`
 	Required bool		`json:"is_required"`
 	IsArray bool		`json:"is_array"`
 }

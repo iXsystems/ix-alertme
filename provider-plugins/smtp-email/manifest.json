@@ -19,15 +19,15 @@
     }
   ],
   "api" : [
-    { "fieldname" : "mailserver", "summary" : "Address for the SMTP server", "type" : "string", "is_required" : true },
-    { "fieldname" : "mailserver_port", "summary" : "Port number for the SMTP server", "type" : ["int",1,65535], "is_required" : true },
-    { "fieldname" : "auth_type", "summary" : "Type of authentication to SMTP server", "type" : ["list", ["plain", "Username/password authentication"], ["none", "No authentication"]], "is_required" : true },
-    { "fieldname" : "auth_user", "summary" : "Username for plain authentication", "type" : "" },
-    { "fieldname" : "auth_pass", "summary" : "Password for plain authentication", "type" : "" },
-    { "fieldname" : "from", "summary" : "Email address to send from", "type" : ["regex","[^@]+@[.]+"], "is_required" : true },
-    { "fieldname" : "to", "summary" : "Email addresses to send to", "type" : ["regex","[^@]+@[.]+"], "is_required" : true, "is_array" : true },
-    { "fieldname" : "cc", "summary" : "Email addresses to carbon-copy to", "type" : ["regex","[^@]+@[.]+"], "is_array" : true },
-    { "fieldname" : "bcc", "summary" : "Email addresses to blind-carbon-copy to", "type" : ["regex","[^@]+@[.]+"], "is_array" : true },
-    { "fieldname" : "subject", "summary" : "Subject line for the email", "type" : "", "is_required" : true }
+    { "fieldname" : "mailserver", "summary" : "Address for the SMTP server", "value" : {"type" : "string"}, "is_required" : true },
+    { "fieldname" : "mailserver_port", "summary" : "Port number for the SMTP server", "value" : { "type" : "integer", "min" : 1, "max" : 65535 }, "is_required" : true },
+    { "fieldname" : "auth_type", "summary" : "Type of authentication to SMTP server", "value" : { "type" : "select", "select" : ["plain", "none"], "summary" : ["Username/password authentication", "No authentication"]}, "is_required" : true },
+    { "fieldname" : "auth_user", "summary" : "Username for plain authentication", "value" : { "type" : "string" } },
+    { "fieldname" : "auth_pass", "summary" : "Password for plain authentication", "value" : { "type" : "string" } },
+    { "fieldname" : "from", "summary" : "Email address to send from", "value" : {"type" : "string", "regex" : "[^@]+@[.]+" }, "is_required" : true },
+    { "fieldname" : "to", "summary" : "Email addresses to send to","value" : {"type" : "string", "regex" : "[^@]+@[.]+" }, "is_required" : true, "is_array" : true },
+    { "fieldname" : "cc", "summary" : "Email addresses to carbon-copy to", "value" : {"type" : "string", "regex" : "[^@]+@[.]+" }, "is_array" : true },
+    { "fieldname" : "bcc", "summary" : "Email addresses to blind-carbon-copy to", "value" : {"type" : "string", "regex" : "[^@]+@[.]+" }, "is_array" : true },
+    { "fieldname" : "subject", "summary" : "Subject line for the email", "value" : { "type" : "string" }, "is_required" : true }
   ]
 }

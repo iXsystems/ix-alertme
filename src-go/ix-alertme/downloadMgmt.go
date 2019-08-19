@@ -53,7 +53,7 @@ func DownloadFile(filepath string, url string, checksum string) error {
 func FetchPluginIndex(repo Repo) ([]PluginIndexManifest, error) {
     var info []PluginIndexManifest
     // Get the data
-    //fmt.Println("Fetch Plugin index:", repo.Url+"/index.json")
+    //PrintDebug("Fetch Plugin index: "+repo.Url+"/index.json")
     resp, err := http.Get(repo.Url+"/index.json")
     if err != nil {
         PrintError("Repo index unavailable: "+repo.Name)
@@ -63,12 +63,14 @@ func FetchPluginIndex(repo Repo) ([]PluginIndexManifest, error) {
     body, err := ioutil.ReadAll(resp.Body)
     if err != nil { 
       PrintError("Repo index unreadable: "+repo.Name)
+      PrintError( string(body) )
       return info, err 
     }
     //Now convert the response into the data structure and return it
     err = json.Unmarshal(body, &info)
     if err != nil { 
       PrintError("Repo index malformed: "+repo.Name)
+      PrintError( string(body) )
     }
     return info, err
 }

@@ -46,22 +46,17 @@ Each plugin provides a single JSON manifest file with all the necessary informat
    * ***is_required*** (boolean) : [optional] Indicate whether this field is required or not. False by default.
    * ***summary*** (string) : Short summary of how this field is used.
    * ***is_array*** (boolean) : [optional] Indicate whether this field should be an array of values. False by default.
-      * Note that this flag may not be used with the special "Lists" type of inputs.
-   * ***type*** (see below) : This defines any rules/checks for validating the input(s)
-      * *Numbers*
-         * "integer" for an integer value, or ["integer", min, max] for a specific range of values
-         * "float" for a decimel value, or ["float", min, max] for a specific range of values
-      * *Text*
-         * "" for any string value, or ["regex", "<regular_expression>"] for a string that exactly matches the regular expression.
-      * *Lists*
-         * ["select", A, B, C] to prompt the user to select **one** of the options (A, B, or C in this case)
-            * The options can have short summaries with the format [A, "Option A"]
-            * Example: ["select", ["A", "Option A details"], [ "SomeB", "Some Option B"] ]
-      * *True/False*
-         * "bool" indicates that a true/false value is required
+      * Note that this flag may not be used with the special "select" type of values.
    * ***default*** (anything - see examples) : [optional] Default value for this field if nothing is provided
       * Any valid JSON can be placed here. "strings", numbers (5.5), booleans (true/false), or even arrays of values.
       * It is recommended to avoid using Json Objects as values, as these are not enforcable via the API check mechanisms.
+   * ***value*** (Json Object) : This defines any rules/checks for validating the input(s)
+      * ***type*** (string) : Type of value. Must be one of the following options: "integer", "float", "string", "bool", or "select"
+      * ***min*** (number) : [optional] Minimum value for an "integer" or "float" type of value.
+      * ***max*** (number) : [optional] Maximum value for an "integer" or "float" type of value.
+      * ***regex*** (string) : [optional] Regular expression to use for validating input. Works for "integer", "float", and "string" types of values.
+      * ***select*** (Json Array) : List of possible values which the user must select from. Required for the "select" type of value.
+      * ***summary*** (Json Array of strings) : [optional] List of information text about each of the "select" options. This array ***MUST*** be the same length as the "select" array if this option is provided (1-to-1 matching of array index between the two arrays).
 
 
 ### Manifest Example
@@ -82,10 +77,10 @@ Each plugin provides a single JSON manifest file with all the necessary informat
   ],
   "exec" : "example_binary",
   "api" : [
-    {"fieldname" : "booltest", "summary" : "Example of a true/false input", "type" : "bool", "default" : false },
-    {"fieldname" : "stringtest", "summary" : "Example of a string input", "type" : "", "default" : "default text" },
-    {"fieldname" : "integertest", "summary" : "Example of an integer input from 0-100", "type" : ["integer", 0, 100], "default" : 50 },
-    {"fieldname" : "selecttest", "summary" : "Example of a list selection input", "type" : ["select","A","B",["C","Option C Summary"]], "default" : "A" }
+    {"fieldname" : "booltest", "summary" : "Example of a true/false input", "value" : { "type" : "bool" }, "default" : false },
+    {"fieldname" : "stringtest", "summary" : "Example of a string input", "value" : {"type" : "string" }, "default" : "default text" },
+    {"fieldname" : "integertest", "summary" : "Example of an integer input from 0-100", "value" : { "type" : "integer", "min" :0, "max" : 100 }, "default" : 50 },
+    {"fieldname" : "selecttest", "summary" : "Example of a list selection input", "value" : { "type" : "select", "select" : ["A","B","C"], "summary" : ["", "B Details, "Option C Summary"] }, "default" : "A" }
   ]
 }
 ```

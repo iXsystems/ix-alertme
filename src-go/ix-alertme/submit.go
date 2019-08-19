@@ -8,6 +8,7 @@ import(
 	"fmt"
 	"errors"
 	"reflect"
+	"regexp"
 )
 
 type AlertText struct {
@@ -32,43 +33,38 @@ func validateValue(opt SetOpts, val interface{}, inslice bool) bool {
 
   } else {
     // Verify the value/type of this field
-    needtyp := ""
-    if reflect.ValueOf(opt.Type).Kind() == reflect.Slice {
-      needtyp, ok = opt.Type.([]interface{})[0].(string)
-    } else {
-      needtyp, ok = opt.Type.(string)
-    }
-    if !ok { return false } //could not read type of field
-    switch(needtyp){
+    switch(opt.Value.Type){
       case "bool":
         _, ok = val.(bool)
+
       case "integer":
-        _, ok = val.(int)
+        num, ok2 := val.(int)
+        if(ok2 && opt.Value.Min != 0){ ok2 = (num >= int(opt.Value.Min)) }
+        if(ok2 && opt.Value.Max != 0){ ok2 = (num <= int(opt.Value.Max)) }
+        ok = ok2;
+
       case "float":
-        _, ok = val.(float32)
-      case "":
-        _, ok = val.(string)
-      case "regex":
-        _, ok = val.(string)
+        num, ok2 := val.(float32)
+        if(ok && opt.Value.Min != 0){ ok2 = (num >= opt.Value.Min) }
+        if(ok && opt.Value.Max != 0){ ok2 = (num <= opt.Value.Max) }
+        ok = ok2;
+
+      case "string":
+        text, ok2 := val.(string)
+        if(ok2 && opt.Value.Regex != ""){ ok2, _ = regexp.MatchString(opt.Value.Regex, text) }
+        ok = ok2;
+
       case "select":
-        list, _ := opt.Type.([]interface{})
-        for index := range(list) {
-          if index <1 {continue } //skip the initial type field (already used)
-          if val == list[index] {
+        for _, valid := range(opt.Value.Select) {
+          if val == valid {
             //got an exact match
             ok = true 
             break
-          } else if reflect.ValueOf(list[index]).Kind() == reflect.Slice {
-            // Got the expanded type where there is a description of the option in the second field
-            if val == list[index].([]interface{})[0] {
-              ok = true 
-              break
-            }
           }
         }
 
       default:
-        fmt.Println("Unknown type of option: ", needtyp, "Provided Value: ", val)
+        fmt.Println("Unknown type of option: ", opt.Value.Type, "Provided Value: ", val)
     }
   }
   return ok
