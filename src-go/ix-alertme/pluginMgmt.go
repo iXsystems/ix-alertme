@@ -41,12 +41,12 @@ type SetOptVal struct {
 	Regex string		`json:"regex,omitempty"`
 	Select []interface{}	`json:"select,omitempty"`
 	Summary []string	`json:"summary,omitempty"`
+	Default interface{}	`json:"default"`
 }
 
 type SetOpts struct {
 	Field string	`json:"fieldname"`
 	Description string	`json:"summary"`
-	Default interface{}	`json:"default"`
 	Value SetOptVal	`json:"value"`
 	Required bool		`json:"is_required"`
 	IsArray bool		`json:"is_array"`

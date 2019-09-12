@@ -80,8 +80,8 @@ func validateSettings(plugin PluginFullManifest, alert AlertAPI) error {
       }
     } else {
       //Field missing - see if there is a default value and add that in
-      if opt.Default != nil {
-        alert.Settings[opt.Field] = opt.Default //insert the default value
+      if opt.Value.Default != nil {
+        alert.Settings[opt.Field] = opt.Value.Default //insert the default value
 
       } else if opt.Required {
         fmt.Println("["+plugin.Name+"] Missing API Setting: ", opt.Field)

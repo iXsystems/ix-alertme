@@ -47,11 +47,11 @@ Each plugin provides a single JSON manifest file with all the necessary informat
    * ***summary*** (string) : Short summary of how this field is used.
    * ***is_array*** (boolean) : [optional] Indicate whether this field should be an array of values. False by default.
       * Note that this flag may not be used with the special "select" type of values.
-   * ***default*** (anything - see examples) : [optional] Default value for this field if nothing is provided
-      * Any valid JSON can be placed here. "strings", numbers (5.5), booleans (true/false), or even arrays of values.
-      * It is recommended to avoid using Json Objects as values, as these are not enforcable via the API check mechanisms.
    * ***value*** (Json Object) : This defines any rules/checks for validating the input(s)
       * ***type*** (string) : Type of value. Must be one of the following options: "integer", "float", "string", "bool", or "select"
+      * ***default*** (anything - see examples) : [optional] Default value for this field if nothing is provided
+         * Any valid JSON can be placed here. "strings", numbers (5.5), booleans (true/false), or even arrays of values.
+        * It is recommended to avoid using Json Objects as values, as these are not enforcable via the API check mechanisms.
       * ***min*** (number) : [optional] Minimum value for an "integer" or "float" type of value.
       * ***max*** (number) : [optional] Maximum value for an "integer" or "float" type of value.
       * ***regex*** (string) : [optional] Regular expression to use for validating input. Works for "integer", "float", and "string" types of values.
@@ -77,10 +77,10 @@ Each plugin provides a single JSON manifest file with all the necessary informat
   ],
   "exec" : "example_binary",
   "api" : [
-    {"fieldname" : "booltest", "summary" : "Example of a true/false input", "value" : { "type" : "bool" }, "default" : false },
-    {"fieldname" : "stringtest", "summary" : "Example of a string input", "value" : {"type" : "string" }, "default" : "default text" },
-    {"fieldname" : "integertest", "summary" : "Example of an integer input from 0-100", "value" : { "type" : "integer", "min" :0, "max" : 100 }, "default" : 50 },
-    {"fieldname" : "selecttest", "summary" : "Example of a list selection input", "value" : { "type" : "select", "select" : ["A","B","C"], "summary" : ["", "B Details, "Option C Summary"] }, "default" : "A" }
+    {"fieldname" : "booltest", "summary" : "Example of a true/false input", "value" : { "type" : "bool", "default" : false } },
+    {"fieldname" : "stringtest", "summary" : "Example of a string input", "value" : {"type" : "string", "default" : "default text" } },
+    {"fieldname" : "integertest", "summary" : "Example of an integer input from 0-100", "value" : { "type" : "integer", "default" : 50, "min" :0, "max" : 100 } },
+    {"fieldname" : "selecttest", "summary" : "Example of a list selection input", "value" : { "type" : "select", "default" : "A", "select" : ["A","B","C"], "summary" : ["", "B Details, "Option C Summary"] } }
   ]
 }
 ```
