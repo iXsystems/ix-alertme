@@ -27,7 +27,7 @@ func validateValue(opt SetOpts, val interface{}, inslice bool) bool {
   if !inslice && opt.IsArray && vtyp.Kind()==reflect.Slice {
     //Need to check each value in this slice
     for elem := range( val.([]interface{}) ) {
-      ok := validateValue(opt, val.([]interface{})[elem], true)
+      ok = validateValue(opt, val.([]interface{})[elem], true)
       if !ok { break }
     }
 
