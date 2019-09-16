@@ -38,13 +38,15 @@ func validateValue(opt SetOpts, val interface{}, inslice bool) bool {
         _, ok = val.(bool)
 
       case "integer":
-        num, ok2 := val.(int)
+        numf, ok2 := val.(float64)
+        num := int(numf)
+        if(ok2){ ok2 = ( numf == float64(num) ) } //Verify a whole number was provided
         if(ok2 && opt.Value.Min != nil){ ok2 = (num >= int(*opt.Value.Min)) }
         if(ok2 && opt.Value.Max != nil){ ok2 = (num <= int(*opt.Value.Max)) }
         ok = ok2;
 
       case "float":
-        num, ok2 := val.(float32)
+        num, ok2 := val.(float64)
         if(ok && opt.Value.Min != nil){ ok2 = (num >= *opt.Value.Min) }
         if(ok && opt.Value.Max != nil){ ok2 = (num <= *opt.Value.Max) }
         ok = ok2;

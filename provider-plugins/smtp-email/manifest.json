@@ -24,10 +24,10 @@
     { "fieldname" : "auth_type", "summary" : "Type of authentication to SMTP server", "value" : { "type" : "select", "select" : ["plain", "none"], "summary" : ["Username/password authentication", "No authentication"]}, "is_required" : true },
     { "fieldname" : "auth_user", "summary" : "Username for plain authentication", "value" : { "type" : "string" } },
     { "fieldname" : "auth_pass", "summary" : "Password for plain authentication", "value" : { "type" : "string" } },
-    { "fieldname" : "from", "summary" : "Email address to send from", "value" : {"type" : "string", "regex" : "[^@]+@[.]+" }, "is_required" : true },
-    { "fieldname" : "to", "summary" : "Email addresses to send to","value" : {"type" : "string", "regex" : "[^@]+@[.]+" }, "is_required" : true, "is_array" : true },
-    { "fieldname" : "cc", "summary" : "Email addresses to carbon-copy to", "value" : {"type" : "string", "regex" : "[^@]+@[.]+" }, "is_array" : true },
-    { "fieldname" : "bcc", "summary" : "Email addresses to blind-carbon-copy to", "value" : {"type" : "string", "regex" : "[^@]+@[.]+" }, "is_array" : true },
+    { "fieldname" : "from", "summary" : "Email address to send from", "value" : {"type" : "string", "regex" : "[^@]+@[^.]+[.][^.]+" }, "is_required" : true },
+    { "fieldname" : "to", "summary" : "Email addresses to send to","value" : {"type" : "string", "regex" : "[^@]+@[^.]+[.][^.]+" }, "is_required" : true, "is_array" : true },
+    { "fieldname" : "cc", "summary" : "Email addresses to carbon-copy to", "value" : {"type" : "string", "regex" : "[^@]+@[^.]+[.][^.]+" }, "is_array" : true },
+    { "fieldname" : "bcc", "summary" : "Email addresses to blind-carbon-copy to", "value" : {"type" : "string", "regex" : "[^@]+@[^.]+[.][^.]+" }, "is_array" : true },
     { "fieldname" : "subject", "summary" : "Subject line for the email", "value" : { "type" : "string" }, "is_required" : true }
   ]
 }
