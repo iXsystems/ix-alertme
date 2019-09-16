@@ -42,6 +42,7 @@ type SetOptVal struct {
 	Select []interface{}	`json:"select,omitempty"`
 	Summary []string	`json:"summary,omitempty"`
 	Default interface{}	`json:"default"`
+	IsSecret bool		`json:"is_secret"`
 }
 
 type SetOpts struct {

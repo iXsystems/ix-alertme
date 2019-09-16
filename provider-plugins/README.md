@@ -49,6 +49,7 @@ Each plugin provides a single JSON manifest file with all the necessary informat
       * Note that this flag may not be used with the special "select" type of values.
    * ***value*** (Json Object) : This defines any rules/checks for validating the input(s)
       * ***type*** (string) : Type of value. Must be one of the following options: "integer", "float", "string", "bool", or "select"
+      * ***is_secret*** (boolean) :  Is the value a secret entry (not shown in listings, treated as a password entry, or similar behavior). "false" by default.
       * ***default*** (anything - see examples) : [optional] Default value for this field if nothing is provided
          * Any valid JSON can be placed here. "strings", numbers (5.5), booleans (true/false), or even arrays of values.
         * It is recommended to avoid using Json Objects as values, as these are not enforcable via the API check mechanisms.
