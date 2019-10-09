@@ -31,6 +31,10 @@ func validateValue(opt SetOpts, val interface{}, inslice bool) bool {
       if !ok { break }
     }
 
+  } else if val == nil && !opt.Required {
+    //Optional value not provided
+    ok = true
+
   } else {
     // Verify the value/type of this field
     switch(opt.Value.Type){
@@ -68,6 +72,11 @@ func validateValue(opt SetOpts, val interface{}, inslice bool) bool {
       default:
         fmt.Println("Unknown type of option: ", opt.Value.Type, "Provided Value: ", val)
     }
+  }
+  if !ok && !opt.Required {
+    // Option check failed, but option also not required.
+    fmt.Println("Optional argument not provided:", opt.Field)
+    ok = true
   }
   return ok
 }
