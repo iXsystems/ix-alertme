@@ -155,12 +155,12 @@ func submitAlert(plugin PluginFullManifest, alert AlertAPI){
   // Now save the settings file for input to the executable
   tmp, _ := json.Marshal(alert)
   tmpFile, err := ioutil.TempFile(os.TempDir(), ".*.json")
-  if err != nil { return }
+  if err != nil { fmt.Println("Error creating tmp file") ; return }
   _, err = tmpFile.Write(tmp)
   tmpFile.Close()
   if err != nil { os.Remove(tmpFile.Name()) ; fmt.Println("Error writing temporary file:", tmpFile.Name()) ; return }
   // Now call the command with the input file path
-  //fmt.Println("Using tmp file: ", tmpFile.Name())
+  fmt.Println("Using tmp file: ", tmpFile.Name())
   cmd := exec.Command(execpath, tmpFile.Name())
   info, err := cmd.Output()
   if err != nil { fmt.Println( string(info)) }
