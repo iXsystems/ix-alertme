@@ -78,6 +78,7 @@ func setupAuth(api AlertAPI) smtp.Auth {
 }
 
 func main() {
+  fmt.Println("Sending smtp-email...")
   // Parse the input API
   api := readAPI(os.Args[1])
   //Setup the authentication

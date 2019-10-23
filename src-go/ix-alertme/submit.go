@@ -158,7 +158,7 @@ func submitAlert(plugin PluginFullManifest, alert AlertAPI){
   if err != nil { return }
   _, err = tmpFile.Write(tmp)
   tmpFile.Close()
-  if err != nil { os.Remove(tmpFile.Name()) ; return }
+  if err != nil { os.Remove(tmpFile.Name()) ; fmt.Println("Error writing temporary file:", tmpFile.Name()) ; return }
   // Now call the command with the input file path
   //fmt.Println("Using tmp file: ", tmpFile.Name())
   cmd := exec.Command(execpath, tmpFile.Name())
