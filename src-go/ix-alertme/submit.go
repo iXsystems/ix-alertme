@@ -152,6 +152,12 @@ func sendAlerts(settingsFile string, textFile string, checkonly bool) error {
 func submitAlert(plugin PluginFullManifest, alert AlertAPI){
   // First determine the path to the executable within the plugin dir
   execpath := Config.InstallDir+"/"+plugin.Name+"/"+plugin.Exec
+  // Ensure the plugin is flagged as executable (pre-1.0 bug)
+  finfo, _ := os.Stat(execpath)
+  fmode := finfo.Mode();
+  if (fmode & 0111) != 0 {
+    os.Chmod(execpath, 0755);
+  }
   // Now save the settings file for input to the executable
   tmp, _ := json.Marshal(alert)
   tmpFile, err := ioutil.TempFile(os.TempDir(), ".*.json")
@@ -160,7 +166,7 @@ func submitAlert(plugin PluginFullManifest, alert AlertAPI){
   tmpFile.Close()
   if err != nil { os.Remove(tmpFile.Name()) ; fmt.Println("Error writing temporary file:", tmpFile.Name()) ; return }
   // Now call the command with the input file path
-  fmt.Println("Using tmp file: ", tmpFile.Name())
+  //fmt.Println("Using tmp file: ", tmpFile.Name())
   cmd := exec.Command(execpath, tmpFile.Name())
   info, err := cmd.Output()
   if err != nil { fmt.Println( string(info)) }
