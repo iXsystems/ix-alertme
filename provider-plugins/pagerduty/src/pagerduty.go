@@ -10,10 +10,7 @@ import (
 
 type API struct {
 	Authtoken string	`json:"authtoken"`
-	Type string		`json:"type"`
 	Title string		`json:"title"`
-	From string		`json:"from"`
-        Service string		`json:"service"`
 }
 
 type AlertText struct {
@@ -41,9 +38,7 @@ func main() {
   event := pagerduty.NewTriggerEvent(api.Settings.Authtoken, api.Settings.Title)
   event.Description = api.Text.PlainText
   event.Details["text"] = api.Text.PlainText
-  response, status, err := pagerduty.Submit(event)
-  fmt.Println("Got response:", response);
-  fmt.Println("Got status:", status);
+  _, _, err := pagerduty.Submit(event)
   if err != nil {
     fmt.Println("Error sending pagerduty incident:", err)
     os.Exit(1)
