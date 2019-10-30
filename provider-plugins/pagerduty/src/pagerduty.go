@@ -41,7 +41,7 @@ func mkIncidentFromAPI(api AlertAPI) pagerduty.CreateIncidentOptions {
   incident.Title = api.Settings.Title
   incident.Service = &pagerduty.APIReference{ api.Settings.Service ,"" }
   incident.Priority = &pagerduty.APIReference{ "warning" ,"" }
-  incident.Body = &pagerduty.APIDetails{ "", api.Text.PlainText }
+  incident.Body = &pagerduty.APIDetails{ "incident_body", api.Text.PlainText }
   return incident
 }
 
@@ -51,6 +51,7 @@ func main() {
 
   client := pagerduty.NewClient(api.Settings.Authtoken);
   ciopts := mkIncidentFromAPI(api) //Create Incident Options
+  fmt.Println("Create Incident:", ciopts);
   _, err := client.CreateIncident( api.Settings.From, &ciopts);
 
   if err != nil {
