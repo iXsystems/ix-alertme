@@ -155,8 +155,7 @@ func submitAlert(plugin PluginFullManifest, alert AlertAPI){
   // Ensure the plugin is flagged as executable (pre-1.0 bug)
   finfo, _ := os.Stat(execpath)
   fmode := finfo.Mode();
-  fmt.Println("Got fmode:", fmod, execpath)
-  if (fmode & 0111) != 0 {
+  if (fmode & 0111) == 0 {
     os.Chmod(execpath, 0755);
   }
   // Now save the settings file for input to the executable
