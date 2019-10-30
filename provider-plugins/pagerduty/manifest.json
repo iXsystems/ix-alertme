@@ -23,6 +23,6 @@
     { "fieldname" : "service", "summary" : "Integration name for token", "value" : { "type" : "string"}, "is_required" : true },
     { "fieldname" : "type", "summary" : "Type of incident", "value" : { "type" : "string"}, "is_required" : true },
     { "fieldname" : "title", "summary" : "Title for the incident report", "value" : { "type" : "string"}, "is_required" : true },
-    { "fieldname" : "from", "summary" : "Tag incident as from this system/person", "value" : { "type" : "string"}, "is_required" : true }
+    { "fieldname" : "from", "summary" : "Email address of user on the PagerDuty account", "value" : { "type" : "string"}, "is_required" : true }
   ]
 }

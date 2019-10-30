@@ -37,10 +37,10 @@ func readAPI(path string) AlertAPI {
 
 func mkIncidentFromAPI(api AlertAPI) pagerduty.CreateIncidentOptions {
   var incident pagerduty.CreateIncidentOptions
-  incident.Type = api.Settings.Type
+  incident.Type = "incident"
   incident.Title = api.Settings.Title
-  incident.Service = &pagerduty.APIReference{ api.Settings.Service ,"" }
-  incident.Priority = &pagerduty.APIReference{ "warning" ,"" }
+  incident.Service = &pagerduty.APIReference{ api.Settings.Service ,"service_reference" }
+  incident.Priority = &pagerduty.APIReference{ "warning" ,"warning2" }
   incident.Body = &pagerduty.APIDetails{ "incident_body", api.Text.PlainText }
   return incident
 }
