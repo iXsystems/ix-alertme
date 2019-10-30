@@ -1,0 +1,27 @@
+{
+  "name" : "pagerduty",
+  "summary" : "PagerDuty service integration",
+  "description" : "Forward alerts to a PagerDuty account as new incident reports.",
+  "icon_url" : "",
+  "version" : "1.0",
+  "date_released" : "2019-10-30",
+  "tags" : ["pager","sms", "service", "plaintext"],
+  "maintainer" : [
+    { "name" : "Ken Moore", "email" : "ken@ixsystems.com" },
+    { "name" : "iXsystems", "email" : "support@ixsystems.com", "site_url" : "http://ixsystems.com" }
+  ],
+  "exec" : "pagerduty",
+  "depends" : [
+    {
+      "filename" : "pagerduty",
+      "url" : "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins/pagerduty/pagerduty",
+      "sha256_checksum" : "9b5fba1ee89326379d3114be012149bd49984079c4ce2dbe33285661fae4dd87"
+    }
+  ],
+  "api" : [
+    { "fieldname" : "authtoken", "summary" : "Authentication token from PagerDuty", "value" : { "type" : "string"}, "is_required" : true },
+    { "fieldname" : "type", "summary" : "Type of incident", "value" : { "type" : "string"}, "is_required" : true },
+    { "fieldname" : "title", "summary" : "Title for the incident report", "value" : { "type" : "string"}, "is_required" : true },
+    { "fieldname" : "from", "summary" : "Tag incident as from this system/person", "value" : { "type" : "string"}, "is_required" : true }
+  ]
+}
