@@ -4,7 +4,7 @@ import (
 	"os"
 	"io/ioutil"
 	"encoding/json"
-	"github.com/PagerDuty/go-pagerduty"
+	"github.com/marcw/pagerduty"
 	"fmt"
 )
 
@@ -35,26 +35,22 @@ func readAPI(path string) AlertAPI {
   return api
 }
 
-func mkIncidentFromAPI(api AlertAPI) pagerduty.CreateIncidentOptions {
+/*func mkIncidentFromAPI(api AlertAPI) pagerduty.CreateIncidentOptions {
   var incident pagerduty.CreateIncidentOptions
   incident.Type = "incident"
   incident.Title = api.Settings.Title
   incident.Service = &pagerduty.APIReference{ api.Settings.Service ,"service_reference" }
-  incident.Priority = &pagerduty.APIReference{ "warning" ,"warning2" }
   incident.Body = &pagerduty.APIDetails{ "incident_body", api.Text.PlainText }
   return incident
-}
+}*/
 
 func main() {
   // Parse the input API
   api := readAPI(os.Args[1])
-
-  client := pagerduty.NewClient(api.Settings.Authtoken);
-  ciopts := mkIncidentFromAPI(api) //Create Incident Options
-  tmp, _ := json.MarshalIndent(ciopts, "", "  ")
-  fmt.Println("Create Incident:", string(tmp) )
-  _, err := client.CreateIncident( api.Settings.From, &ciopts);
-
+  event := pagerduty.NewTriggerEvent(api.Settings.Authtoken, api.Text.PlainText)
+  response, status, err := pagerduty.Submit(event)
+  fmt.Println("Got response:", response);
+  fmt.Println("Got status:", status);
   if err != nil {
     fmt.Println("Error sending pagerduty incident:", err)
     os.Exit(1)
