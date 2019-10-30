@@ -13,6 +13,7 @@ type API struct {
 	Type string		`json:"type"`
 	Title string		`json:"title"`
 	From string		`json:"from"`
+        Service string		`json:"service"`
 }
 
 type AlertText struct {
@@ -38,8 +39,8 @@ func mkIncidentFromAPI(api AlertAPI) pagerduty.CreateIncidentOptions {
   var incident pagerduty.CreateIncidentOptions
   incident.Type = api.Settings.Type
   incident.Title = api.Settings.Title
-  incident.Service = nil
-  incident.Priority = nil
+  incident.Service = &pagerduty.APIReference{ api.Settings.Service ,"" }
+  incident.Priority = &pagerduty.APIReference{ "warning" ,"" }
   incident.Body = &pagerduty.APIDetails{ "", api.Text.PlainText }
   return incident
 }
