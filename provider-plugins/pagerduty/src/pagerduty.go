@@ -51,7 +51,8 @@ func main() {
 
   client := pagerduty.NewClient(api.Settings.Authtoken);
   ciopts := mkIncidentFromAPI(api) //Create Incident Options
-  fmt.Println("Create Incident:", ciopts);
+  tmp, _ := json.MarshalIndent(ciopts, "", "  ")
+  fmt.Println("Create Incident:", string(tmp) )
   _, err := client.CreateIncident( api.Settings.From, &ciopts);
 
   if err != nil {
