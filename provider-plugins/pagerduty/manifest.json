@@ -15,7 +15,7 @@
     {
       "filename" : "pagerduty",
       "url" : "https://raw.githubusercontent.com/iXsystems/ix-alertme/master/provider-plugins/pagerduty/pagerduty",
-      "sha256_checksum" : "9b5fba1ee89326379d3114be012149bd49984079c4ce2dbe33285661fae4dd87"
+      "sha256_checksum" : "1ab196475ff3647e866a5d03398bb55864194a7297c64af91147becad4bbb847"
     }
   ],
   "api" : [
