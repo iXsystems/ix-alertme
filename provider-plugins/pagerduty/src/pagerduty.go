@@ -35,19 +35,12 @@ func readAPI(path string) AlertAPI {
   return api
 }
 
-/*func mkIncidentFromAPI(api AlertAPI) pagerduty.CreateIncidentOptions {
-  var incident pagerduty.CreateIncidentOptions
-  incident.Type = "incident"
-  incident.Title = api.Settings.Title
-  incident.Service = &pagerduty.APIReference{ api.Settings.Service ,"service_reference" }
-  incident.Body = &pagerduty.APIDetails{ "incident_body", api.Text.PlainText }
-  return incident
-}*/
-
 func main() {
   // Parse the input API
   api := readAPI(os.Args[1])
-  event := pagerduty.NewTriggerEvent(api.Settings.Authtoken, api.Text.PlainText)
+  event := pagerduty.NewTriggerEvent(api.Settings.Authtoken, api.Settings.Title)
+  event.Description = api.Text.PlainText
+  event.Details["text"] = api.Text.PlainText
   response, status, err := pagerduty.Submit(event)
   fmt.Println("Got response:", response);
   fmt.Println("Got status:", status);
