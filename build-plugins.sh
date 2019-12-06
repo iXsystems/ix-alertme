@@ -2,7 +2,7 @@
 #Quick build script for all the plugins
 # INPUTS
 OUTDIR="${1}"
-if [ -n "${OUTDIR}" ] ; then
+if [ "${OUTDIR}" = "." ] ; then
   OUTDIR=`realpath -q "${OUTDIR}"`
 fi
 #Verify that the output directory exists
