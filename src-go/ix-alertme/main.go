@@ -51,7 +51,7 @@ func ListLocalPlugins() error {
 // Define all the CLI input flags and subcommands
 var (
   app = kingpin.New("ix-alertme", "Alert Notification Plugin System")
-  Configfile = app.Flag("config", "Use alternate configuration file").Short('c').Default("/usr/local/etc/ix-alertme.json").String()
+  Configfile = app.Flag("config", "Use alternate configuration file").Short('c').Default("").String()
 
   plugins 			= app.Command("plugins", "Plugin Management Functionality")
     pluginsSearch 	= plugins.Command("search", "Search for available plugins")

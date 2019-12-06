@@ -17,8 +17,27 @@ type Configuration struct {
 	
 }
 
+func fileExists(filename string) bool {
+    info, err := os.Stat(filename)
+    if os.IsNotExist(err) {
+        return false
+    }
+    return !info.IsDir()
+}
+
 func loadConfiguration(location string) Configuration {
   var config Configuration
+  srchpaths := []string{ "/usr/local/", "/usr/", "/" }
+  if location == "" { 
+    // Default config file location - look for it in the search paths
+    for _, dir := range(srchpaths) {
+      if fileExists( dir+"etc/ix-alertme.json" ){
+        // Found config file
+        location = dir+"etc/ix-alertme.json"
+        break
+      }
+    }
+  }
   //Load the local config file
   file, err := os.Open(location)
   defer file.Close()

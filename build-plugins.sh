@@ -13,6 +13,7 @@ fi
 #Get the current directory of this build script
 cdir=`dirname "${0}"`
 cdir=`realpath -q "${cdir}"`
+export GOPATH="${cdir}/.gopath"
 
 #Move into the src-plugins dir and start building all the individual plugins
 cd "${cdir}/src-plugins"
@@ -34,3 +35,4 @@ do
     echo "[ERROR] Plugin Could not be created: ${plugin}"
   fi
 done
+unset GOPATH
