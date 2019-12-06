@@ -4,6 +4,7 @@ import(
 	"encoding/json"
 	"os"
 	"io/ioutil"
+	"os/user"
 )
 
 type Repo struct {
@@ -50,7 +51,8 @@ func loadConfiguration(location string) Configuration {
     if os.Getuid() == 0 {
       config.InstallDir = "/usr/local/ix-alertme/plugins"
     } else {
-      config.InstallDir, _ = os.UserHomeDir();
+      cuser, _ := user.Current()
+      config.InstallDir = cuser.HomeDir;
       config.InstallDir = config.InstallDir + "/.local/ix-alertme/plugins"
     }
   }
