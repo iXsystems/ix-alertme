@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #Quick build script for the ix-alertme utility
 # INPUTS
 OUTDIR="${1}"
