@@ -13,7 +13,7 @@ fi
 #Get the current directory of this build script
 cdir=`dirname "${0}"`
 cdir=`realpath -q "${cdir}"`
-export GOPATH="${cdir}/.gopath"
+export GOPATH="/tmp/.gopath"
 ## TEMPORARY FIX: package source fetch issue from upstream
 if [ -d "${GOPATH}/src/github.com/pierrec/lz4/v3" ] ; then
   rm -rf "${GOPATH}/src/github.com/pierrec/lz4/v3"
