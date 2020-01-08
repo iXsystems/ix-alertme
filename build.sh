@@ -29,7 +29,7 @@ if [ $? -eq 0 ] ; then
   unset GOPATH
   echo "ix-alertme built successfully"
   if [ -n "${OUTDIR}" ] ; then
-    cp ix-alertme "${OUTDIR}/ix-alertme"
+    mv ix-alertme "${OUTDIR}/ix-alertme"
     echo " - Installed to ${OUTDIR}/ix-alertme"
   fi
 else

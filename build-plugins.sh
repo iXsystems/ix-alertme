@@ -27,7 +27,7 @@ do
     echo "Plugin Created: ${plugin}"
     if [ -n "${OUTDIR}" ] ; then
       mkdir -p "${OUTDIR}/${plugin}"
-      cp "${cdir}/src-plugins/${plugin}/${plugin}" "${OUTDIR}/${plugin}/${plugin}"
+      mv "${cdir}/src-plugins/${plugin}/${plugin}" "${OUTDIR}/${plugin}/${plugin}"
       cp "${cdir}/src-plugins/${plugin}/manifest.json" "${OUTDIR}/${plugin}/manifest.json"
       echo " - Installed to ${OUTDIR}/${plugin}"
     fi
