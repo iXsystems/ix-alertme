@@ -3,7 +3,6 @@ package main
 import(
 	"encoding/json"
 	"os"
-	"fmt"
 	"io/ioutil"
 	"os/user"
 )
@@ -44,9 +43,9 @@ func loadConfiguration(location string) Configuration {
   defer file.Close()
   if err == nil {
     tmp, err := ioutil.ReadAll(file)
-    if err == nil { json.Unmarshal(tmp, config) }
-  }else{
-    fmt.Fprintf(os.Stderr, "WARNING: No config file found. Using defaults.")
+    if err == nil { 
+      json.Unmarshal(tmp, &config)
+    }
   }
   //Load the default values if not specified
   if config.InstallDir == "" { 
