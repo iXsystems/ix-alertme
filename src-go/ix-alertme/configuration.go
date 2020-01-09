@@ -3,6 +3,7 @@ package main
 import(
 	"encoding/json"
 	"os"
+	"fmt"
 	"io/ioutil"
 	"os/user"
 )
@@ -15,7 +16,6 @@ type Repo struct {
 type Configuration struct {
 	RepoList []Repo	`json:"repos"`
 	InstallDir string	`json:"install_dir"`
-	
 }
 
 func fileExists(filename string) bool {
@@ -45,6 +45,8 @@ func loadConfiguration(location string) Configuration {
   if err == nil {
     tmp, err := ioutil.ReadAll(file)
     if err == nil { json.Unmarshal(tmp, config) }
+  }else{
+    fmt.Fprintf(os.Stderr, "WARNING: No config file found. Using defaults.")
   }
   //Load the default values if not specified
   if config.InstallDir == "" { 
