@@ -1,0 +1,47 @@
+{
+    "name": "jira",
+    "summary": "Jira service integration",
+    "description": "Forward alerts to Jira as new tickets.",
+    "icon_url": "",
+    "version": "1.0",
+    "date_released": "2020-02-08",
+    "tags": ["jira", "ticketing", "service", "issue", "tracker"],
+    "maintainer": [
+        { "name": "Aaron Ervin", "email": "aervin@ixsystems.com" },
+        { "name": "iXsystems", "email": "support@ixsystems.com", "site_url": "http://ixsystems.com" }
+    ],
+    "exec": "jira",
+    "depends": [],
+    "api": [
+        {
+            "fieldname": "username",
+            "summary": "Jira user",
+            "value": { "type": "string" },
+            "is_required": true
+        },
+        {
+            "fieldname": "password",
+            "summary": "User password",
+            "value": { "type": "string" },
+            "is_required": true
+        },
+        {
+            "fieldname": "server",
+            "summary": "Jira server address",
+            "value": { "type": "string" },
+            "is_required": true
+        },
+        {
+            "fieldname": "project",
+            "summary": "Jira project prefix",
+            "value": { "type": "string" },
+            "is_required": true
+        },
+        {
+            "fieldname": "assignee",
+            "summary": "Username of issue assignee",
+            "value": { "type": "string" },
+            "is_required": true
+        }
+    ]
+}
