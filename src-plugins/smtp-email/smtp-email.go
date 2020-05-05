@@ -69,7 +69,7 @@ func assembleBody(api AlertAPI) []byte {
 
 func setupAuth(api AlertAPI) smtp.Auth {
   var auth smtp.Auth
-  if api.Settings.AuthType == "plain" {
+  if api.Settings.AuthType == "plain" || api.Settings.AuthPass == "" {
     auth = smtp.PlainAuth("", api.Settings.AuthUser, api.Settings.AuthPass, api.Settings.Mailserver)
   } else {
     //Unknown / none
