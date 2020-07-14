@@ -69,13 +69,48 @@ func assembleBody(api AlertAPI) []byte {
 
 func setupAuth(api AlertAPI) smtp.Auth {
   var auth smtp.Auth
-  if api.Settings.AuthType == "plain" || api.Settings.AuthPass == "" {
+  if api.Settings.AuthType == "plain" || api.Settings.AuthPass != "" {
     auth = smtp.PlainAuth("", api.Settings.AuthUser, api.Settings.AuthPass, api.Settings.Mailserver)
   } else {
     //Unknown / none
   }
   return auth
 }
+
+/*
+func SendNoAuthMail(addr, from, to []string, body string) error {
+    //This function was originally a copy of the "SendMail" function from 
+    //  https://github.com/gadelkareem/go-helpers/
+    // (Apache 2-clause license)
+    // ==========
+	r := strings.NewReplacer("\r\n", "", "\r", "", "\n", "", "%0a", "", "%0d", "")
+
+	c, err := smtp.Dial(addr)
+	if err != nil {
+		return err
+	}
+	defer c.Close()
+	if err = c.Mail(r.Replace(from)); err != nil {
+		return err
+	}
+	for i := range to {
+		to[i] = r.Replace(to[i])
+		if err = c.Rcpt(to[i]); err != nil {
+			return err
+		}
+	}
+
+	w, err := c.Data()
+	if err != nil { return err }
+
+	_, err = w.Write([]byte(body))
+	if err != nil {
+		return err
+	}
+	err = w.Close()
+	if err != nil { return err }
+	return c.Quit()
+}*/
 
 func main() {
   //fmt.Println("Sending smtp-email...")
@@ -86,6 +121,7 @@ func main() {
   //Send the email(s)
   toall := append(api.Settings.ToAddr, api.Settings.BccAddr...)
   toall = append(toall, api.Settings.CcAddr...)
+  if(auth.
   err := smtp.SendMail( api.Settings.Mailserver+":"+strconv.Itoa(api.Settings.MailserverPort), 
 		auth, api.Settings.FromAddr, 
 		toall, assembleBody(api) )
