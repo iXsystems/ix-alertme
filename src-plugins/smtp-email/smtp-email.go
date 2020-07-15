@@ -121,7 +121,6 @@ func main() {
   //Send the email(s)
   toall := append(api.Settings.ToAddr, api.Settings.BccAddr...)
   toall = append(toall, api.Settings.CcAddr...)
-  if(auth.
   err := smtp.SendMail( api.Settings.Mailserver+":"+strconv.Itoa(api.Settings.MailserverPort), 
 		auth, api.Settings.FromAddr, 
 		toall, assembleBody(api) )
